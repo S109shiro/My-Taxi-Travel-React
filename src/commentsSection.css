@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root{
+    --color: black;
+    --tarjetaColor: rgb(243, 244, 246);
+    --estrellas: black;
+}
+
+
+h1 {
+    color: var(--color);
+}
+
+.tarjeta{
+    background-color: var(--tarjetaColor);
+}
+
+.estrella svg{
+    fill: var(--estrellas);
+}
+
+.tarjeta p, .tarjeta span{
+    color: var(--color)
+}
+
+
+.tema-oscuro{
+    --color: white;
+    --tarjetaColor: #242424;
+    --estrellas: white;
+}

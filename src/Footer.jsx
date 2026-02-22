@@ -1,4 +1,4 @@
-// Importar estilos TailWinds
+// Importar estilos TailWind
 import "./footer.css";
 
 // Importar estilos del Footer
