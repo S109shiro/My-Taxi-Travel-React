@@ -1,11 +1,25 @@
 // Estilos de Tailwind
-import "./header.css";
+import "./navbar.css";
 
 // Estilos del Nav y Footer
 import "./styleHF.css";
 
+// Importar el JS con la logica para cambiar el tema de la pagina
+import cambiarTema from "./bCambiarTema";
+
+// importacion para los enlaces del nav
+import { useNavigate } from 'react-router-dom';
+
 // Props: Obtiene el usuario y verifica si esta logueado
-function Header({ user = {}, logIn = false }) {
+function NavBar({ user = {}, logIn = false }) {
+  // Constante para el useNavigate
+  const navigate = useNavigate();
+
+  // Funcion para reutilizar en cada link
+  function navUrl(url) {
+    navigate(url);
+  }
+
   //console.log(user);
   //console.log(logIn);
   return (
@@ -14,7 +28,7 @@ function Header({ user = {}, logIn = false }) {
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a
             className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
-            href="index.html"
+            onClick={()=>{navUrl("/")}}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -32,37 +46,37 @@ function Header({ user = {}, logIn = false }) {
           </a>
           <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
             <a
-              className="mr-5 text-gray-900 bg-neutral-50 rounded-lg p-1"
-              href="index.html"
+              className="mr-5 text-gray-900 bg-neutral-50 rounded-lg p-1 cursor-pointer"
+              onClick={()=>{navUrl("/")}}
             >
               Inicio
             </a>
             <a
-              className="mr-5 hover:text-gray-900"
-              href="paginas/solicitarViaje/solicitudViaje.html"
+              className="mr-5 hover:text-gray-900 cursor-pointer"
+              onClick={()=>{navUrl("/solicitarViaje")}}
             >
               Solicitar Viaje
             </a>
             <a
-              className="mr-5 hover:text-gray-900"
-              href="paginas/sobreNosotros/sobreNosotros.html"
+              className="mr-5 hover:text-gray-900 cursor-pointer"
+              onClick={()=>{navUrl("/sobreNosotros")}}
             >
               Sobre Nosotros
             </a>
             <a
-              className="mr-5 hover:text-gray-900"
-              href="paginas/soporte/soporte.html"
+              className="mr-5 hover:text-gray-900 cursor-pointer"
+              onClick={()=>{navUrl("/soporte")}}
             >
               Soporte
             </a>
             <a
-              className="mr-5 hover:text-gray-900"
-              href="paginas/miCuenta/miCuenta.html"
+              className="mr-5 hover:text-gray-900 cursor-pointer"
+              onClick={()=>{navUrl("/miCuenta")}}
             >
               Mi Cuenta
             </a>
           </nav>
-          <a href="./paginas/login/login.html">
+          <a onClick={()=>{navUrl("/login")}}>
             <button className="inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2">
               Login
               <svg
@@ -78,7 +92,7 @@ function Header({ user = {}, logIn = false }) {
               </svg>
             </button>
           </a>
-          <a href="./paginas/login/registro.html">
+          <a onClick={()=>{navUrl("/registro")}}>
             <button className="inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white">
               Registro
               <svg
@@ -95,7 +109,7 @@ function Header({ user = {}, logIn = false }) {
             </button>
           </a>
           <button
-            onClick="cambiarTema()"
+            onClick={cambiarTema}
             id="boton-tema"
             className="inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white"
           >
@@ -107,4 +121,4 @@ function Header({ user = {}, logIn = false }) {
   );
 }
 
-export default Header;
+export default NavBar;

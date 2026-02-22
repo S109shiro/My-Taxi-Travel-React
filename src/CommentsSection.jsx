@@ -12,7 +12,7 @@ function CommentsSection({ commentsUsers = {} }) {
           </h1>
           <div className="flex flex-3 -m-4">
             <div className="p-4 md:w-1/2 w-full">
-              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg">
+              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={()=>{console.log("Se cliquea un comentario");}}>
                 <div className="estrella flex mb-2">
                   <svg
                     width="20"
@@ -83,7 +83,7 @@ function CommentsSection({ commentsUsers = {} }) {
               </div>
             </div>
             <div className="p-4 md:w-1/2 w-full">
-              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg">
+              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={()=>{console.log("Se cliquea un comentario");}}>
                 <div className="estrella flex mb-2">
                   <svg
                     width="20"
@@ -154,7 +154,7 @@ function CommentsSection({ commentsUsers = {} }) {
               </div>
             </div>
             <div className="p-4 md:w-1/2 w-full">
-              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg">
+              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={()=>{console.log("Se cliquea un comentario");}}>
                 <div className="estrella flex mb-2">
                   <svg
                     width="20"

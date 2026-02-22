@@ -4,13 +4,29 @@ import "./footer.css";
 // Importar estilos del Footer
 import "./styleHF.css";
 
+import { useNavigate } from 'react-router-dom';
+
+// Funcion para acceder a enlaces externos abriendo otra pagina
+export function clickWebs(url){
+  window.open(url,"_blank");
+}
+
+
 function Footer() {
+  // Constante para el useNavigate
+  const navigate = useNavigate();
+
+  // Funcion para reutilizar en cada link
+  function navUrl(url) {
+    navigate(url);
+  }
+
   return (
     <>
       <footer className="text-gray-600 body-font bg-[var(--bg)]">
         <div className="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
           <span className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
-            <a href="index.html">
+            <a onClick={()=>{navUrl("/")}}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="30"
@@ -30,8 +46,7 @@ function Footer() {
           <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
             <a
               className="text-gray-500"
-              href="https://www.facebook.com/"
-              target="_blank"
+              onClick={()=> {clickWebs("https://www.facebook.com/")}}
             >
               <svg
                 fill="black"
@@ -46,8 +61,7 @@ function Footer() {
             </a>
             <a
               className="ml-3 text-gray-500"
-              href="https://x.com/home?lang=es"
-              target="_blank"
+              onClick={()=>{clickWebs("https://x.com/home?lang=es")}}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -66,8 +80,7 @@ function Footer() {
             </a>
             <a
               className="ml-3 text-gray-500"
-              href="https://www.instagram.com/"
-              target="_blank"
+              onClick = {()=>{clickWebs("https://www.instagram.com/")}}
             >
               <svg
                 fill="black"
@@ -84,8 +97,7 @@ function Footer() {
             </a>
             <a
               className="ml-3 text-gray-500"
-              href="https://co.linkedin.com/"
-              target="_blank"
+              onClick={()=>{clickWebs("https://www.linkedin.com/in/sebastian-gonzalez-rodriguez-a335aa1a0/")}}
             >
               <svg
                 fill="black"
