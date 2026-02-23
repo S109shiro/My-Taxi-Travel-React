@@ -14,7 +14,7 @@ const root = createRoot(element);
 
 // React Dom Router se utiliza para rutear paginas con componentes y un path
 root.render(
-  <BrowserRouter>
+  <BrowserRouter basename="/my-taxi-travel-react">
     <Routes>
       <Route path="/" element={
           <>
