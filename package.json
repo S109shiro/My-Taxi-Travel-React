@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://s109shiro.github.io/My-Taxi-Travel-React/",
+  "homepage": "https://s109shiro.github.io/my-taxi-travel-react/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
