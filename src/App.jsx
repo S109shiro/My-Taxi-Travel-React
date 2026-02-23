@@ -13,6 +13,8 @@ const element = document.getElementById("root");
 const root = createRoot(element);
 
 // React Dom Router se utiliza para rutear paginas con componentes y un path
+
+// HashRoute para GitPages, el resto BrowserRouter
 root.render(
   <HashRouter>
     <Routes>
