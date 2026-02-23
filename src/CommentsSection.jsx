@@ -1,8 +1,21 @@
 // Importar estilos Tailwind y estilos unicos del componente
+import { useState } from "react";
 import "./commentsSection.css";
 
 function CommentsSection({ commentsUsers = {} }) {
   //console.log(commentsUsers);
+
+  // Estado para pasar los distintos comentarios
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  function nextComment(){
+    return currentIndex < 10 ? setCurrentIndex(currentIndex +1) : null;
+  }
+  function backComment(){
+    return  currentIndex > 0 ? setCurrentIndex(currentIndex -1) : null;
+  }
+
+  //console.log(currentIndex)
   return (
     <>
       <section className="text-gray-600 body-font">
@@ -12,7 +25,7 @@ function CommentsSection({ commentsUsers = {} }) {
           </h1>
           <div className="flex flex-3 -m-4">
             <div className="p-4 md:w-1/2 w-full">
-              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={()=>{console.log("Se cliquea un comentario");}}>
+              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg"onClick={()=>{backComment()}} >
                 <div className="estrella flex mb-2">
                   <svg
                     width="20"
@@ -60,7 +73,7 @@ function CommentsSection({ commentsUsers = {} }) {
                     <polygon points="12 1 15 8 22 9 17 15 19 22 12 18 5 22 7 15 2 9 9 8" />
                   </svg>
                 </div>
-                <p className="leading-relaxed mb-6">
+                <p className="leading-relaxed mb-6" onClick={()=>{console.log("Se cliquea el comentario");}}>
                   <i>
                     “El servicio fue muy rápido, pedí el taxi y llegó en menos
                     de 5 minutos. El conductor fue muy amable y el carro estaba
@@ -83,7 +96,7 @@ function CommentsSection({ commentsUsers = {} }) {
               </div>
             </div>
             <div className="p-4 md:w-1/2 w-full">
-              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={()=>{console.log("Se cliquea un comentario");}}>
+              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg">
                 <div className="estrella flex mb-2">
                   <svg
                     width="20"
@@ -131,7 +144,7 @@ function CommentsSection({ commentsUsers = {} }) {
                     <polygon points="12 1 15 8 22 9 17 15 19 22 12 18 5 22 7 15 2 9 9 8" />
                   </svg>
                 </div>
-                <p className="leading-relaxed mb-6">
+                <p className="leading-relaxed mb-6" onClick={()=>{console.log("Se cliquea el comentario");}}>
                   <i>
                     “Excelente experiencia. Me sentí segura durante el viaje y
                     la opción de seguimiento en tiempo real me dio mucha
@@ -154,7 +167,7 @@ function CommentsSection({ commentsUsers = {} }) {
               </div>
             </div>
             <div className="p-4 md:w-1/2 w-full">
-              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={()=>{console.log("Se cliquea un comentario");}}>
+              <div className="tarjeta h-full bg-gray-100 p-8 rounded shadow-lg" onClick={nextComment}>
                 <div className="estrella flex mb-2">
                   <svg
                     width="20"
@@ -202,7 +215,7 @@ function CommentsSection({ commentsUsers = {} }) {
                     <polygon points="12 1 15 8 22 9 17 15 19 22 12 18 5 22 7 15 2 9 9 8" />
                   </svg>
                 </div>
-                <p className="leading-relaxed mb-6">
+                <p className="leading-relaxed mb-6" onClick={()=>{console.log("Se cliquea el comentario");}}>
                   <i>
                     “Muy buen servicio, lo uso casi todos los días para ir al
                     trabajo. Nunca he tenido inconvenientes y los conductores

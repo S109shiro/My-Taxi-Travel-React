@@ -9,19 +9,27 @@ import cambiarTema from "./bCambiarTema";
 
 // importacion para los enlaces del nav
 import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
 
 // Props: Obtiene el usuario y verifica si esta logueado
 function NavBar({ user = {}, logIn = false }) {
   // Constante para el useNavigate
   const navigate = useNavigate();
-
   // Funcion para reutilizar en cada link
   function navUrl(url) {
     navigate(url);
   }
 
-  //console.log(user);
-  //console.log(logIn);
+  // Control sobre navbar en la version mobile
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  function navMobile(){
+    if(!isMenuOpen){
+      return setIsMenuOpen(true);
+    }else{
+      return setIsMenuOpen(false)
+    }
+  }
+
   return (
     <>
       <header className="text-gray-600 body-font bg-[var(--bg)]">
