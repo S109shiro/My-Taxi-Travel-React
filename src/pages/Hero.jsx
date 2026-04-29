@@ -3,7 +3,7 @@ import "./hero.css";
 import { useEffect } from 'react';
 
 // Importar imagen del home
-import imgHome from './assets/Hero.jpg';
+import imgHome from '../assets/Hero.jpg';
 
 function Hero() {
   useEffect(()=>{

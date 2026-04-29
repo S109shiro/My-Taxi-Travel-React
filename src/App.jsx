@@ -1,12 +1,12 @@
 import { createRoot } from "react-dom/client";
 import React from "react";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
-import Hero from "./Hero";
-import CommentsSection from "./CommentsSection";
-import Login from "./Login";
-import Registro from "./Registro";
-import SobreNosotros from "./SobreNosotros";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
+import Hero from "./pages/Hero";
+import CommentsSection from "./pages/CommentsSection";
+import Login from "./pages/Login";
+import Registro from "./pages/Registro";
+import SobreNosotros from "./pages/SobreNosotros";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 
 // Obtenemos la etiqueta a utilizar

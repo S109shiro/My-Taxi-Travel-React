@@ -2,6 +2,7 @@
 
 :root{
     --color: black;
+    --colorTargetName: white;
     --tarjetaColor: rgb(243, 244, 246);
     --estrellas: black;
 }
@@ -19,13 +20,17 @@ h1 {
     fill: var(--estrellas);
 }
 
-.tarjeta p, .tarjeta span{
+
+.tarjeta p, .tarjeta span {
+    background-color: var(--colorTargetName) !important;
     color: var(--color)
 }
 
 
+
 .tema-oscuro{
     --color: white;
+    --colorTargetName: #181818;
     --tarjetaColor: #242424;
     --estrellas: white;
 }

@@ -2,8 +2,8 @@
 import "./login.css";
 
 // Imagen del login
-import imgLogin from "./assets/imgLogin/login-image.jpg"
-import logo from "../public/icon.svg"
+import imgLogin from "../assets/imgLogin/login-image.jpg"
+import logo from "../../public/icon.svg"
 import { useEffect } from "react";
 
 

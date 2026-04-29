@@ -1,10 +1,10 @@
 import "./sobreNosotros.css";
 import { useEffect } from "react";
 
-import User1 from "./assets/imgSNosotros/user04.jpg"
-import User2 from "./assets/imgSNosotros/user05.jpg"
-import User3 from "./assets/imgSNosotros/user06.jpg"
-import Portada from "./assets/imgSNosotros/Portada.jpg"
+import User1 from "../assets/imgSNosotros/user04.jpg"
+import User2 from "../assets/imgSNosotros/user05.jpg"
+import User3 from "../assets/imgSNosotros/user06.jpg"
+import Portada from "../assets/imgSNosotros/Portada.jpg"
 
 function SobreNosotros() {
   useEffect(() => {
