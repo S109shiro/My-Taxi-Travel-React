@@ -1,10 +1,15 @@
 // Se importan estilos TailWind y propios del componente
 import "./hero.css";
+import { useEffect } from 'react';
 
 // Importar imagen del home
 import imgHome from './assets/Hero.jpg';
 
 function Hero() {
+  useEffect(()=>{
+    document.title= "My Taxi Travel - Inicio";
+  })
+
   return (
     <>
       <section className="text-gray-600 body-font">

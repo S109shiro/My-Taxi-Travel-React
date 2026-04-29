@@ -9,7 +9,7 @@ import cambiarTema from "./bCambiarTema";
 
 // importacion para los enlaces del nav
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Props: Obtiene el usuario y verifica si esta logueado
 function NavBar({ user = {}, logIn = false }) {

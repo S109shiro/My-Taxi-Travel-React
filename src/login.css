@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root{
+    --tarjeta_color: white;
+    --colorTitulo: black;
+    --colorTexto: #111827;
+    --invertir: ;
+    --check: #2C2C2C;
+    --colorBoton: #2C2C2C;
+    --colorBTexto: white;
+}
+
+.icono{
+    filter: var(--invertir) ;
+}
+
+.titulo{
+    color: var(--colorTitulo);
+}
+
+.boton{
+    color: var(--colorBTexto)
+}
+
+.boton:hover{
+    color: var(--check)
+}
+
+.tema-oscuro .boton:hover{
+    background-color: black;
+    color: var(--colorTitulo);
+}
+
+.tema-oscuro .olvidar:hover{
+    color: white;
+}
+
+
+.tema-oscuro{
+    --tarjeta_color: #242424;
+    --colorTitulo: white;
+    --invertir: invert(1);
+    --check: white;
+    --colorBoton:white;
+    --colorBTexto:#2C2C2C;
+}

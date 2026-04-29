@@ -4,6 +4,9 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import Hero from "./Hero";
 import CommentsSection from "./CommentsSection";
+import Login from "./Login";
+import Registro from "./Registro";
+import SobreNosotros from "./SobreNosotros";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 
 // Obtenemos la etiqueta a utilizar
@@ -26,6 +29,36 @@ root.render(
             <Footer />
           </>
         }
+      ></Route>
+
+
+      <Route path="/sobreNosotros" element={
+        <>
+          <NavBar />
+          <SobreNosotros />
+          <Footer />
+        </>
+      }
+      ></Route>
+
+
+      <Route path="/registro" element={
+        <>
+          <NavBar />
+          <Registro />
+          <Footer />
+        </>
+      }
+      ></Route>
+
+      <Route path="/login" element={
+        <>  
+          <NavBar />
+          <Login />
+          <Footer />
+        </>
+      }
+
       ></Route>
       
     </Routes>

@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root{
+    --color: Black;
+    --colorTarjeta: white;
+}
+
+
+.informacion h1, .informacion p {
+    color: var(--color);
+}
+
+
+.calificaciones_contenedor h2, .calificaciones_contenedor p{
+    color: var(--color);
+}
+
+.tarjeta{
+    background-color: var(--colorTarjeta);
+}
+
+.tema-oscuro .tarjeta span{
+    background-color: var(--color);
+}
+
+.tema-oscuro{
+    --color: white;
+    --colorTarjeta: #181818;
+}
+
+.tema-oscuro .tarjeta:hover{
+    transition: all 0.3s ease-in-out 0.1s;
+    box-shadow: 0 10px 15px -3px rgba(255, 253, 253, 0.1);
+    
+}
