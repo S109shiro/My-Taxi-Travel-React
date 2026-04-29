@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root{
+    --colorTitulo: black;
+    --colorTexto: #111827;
+}
+
+.preguntas-frecuentes h2{
+    color: var(--colorTitulo)
+}
+
+.preguntas-frecuentes p, .preguntas-frecuentes a{
+    color: var(--colorTexto);
+}
+
+.contactanos h1, .contactanos p, .contactanos label, .contactanos a{
+    color: var(--colorTitulo);
+}
+
+
+.tema-oscuro{
+    --colorTitulo: white;
+    --colorTexto: #E5E7EB;
+}
+
+.tema-oscuro .preguntas-frecuentes a:hover, .tema-oscuro .contactanos a:hover{
+    color: #FEBC2F;
+}

@@ -1,6 +1,10 @@
 import "./solicitarViaje.css";
+import { useEffect } from "react";
 
 function SolicitarViaje() {
+  useEffect(()=>{
+    document.title = "My Taxi Travel - Solicitar viaje";
+  })
   return (
     <>
       <section className="text-gray-600 body-font relative min-h-screen overflow-hidden">

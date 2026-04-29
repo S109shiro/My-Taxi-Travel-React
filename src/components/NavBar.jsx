@@ -8,7 +8,7 @@ import "./styleHF.css";
 import cambiarTema from "./bCambiarTema";
 
 // importacion para los enlaces del nav
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
 // Props: Obtiene el usuario y verifica si esta logueado
@@ -53,41 +53,42 @@ function NavBar({ user = {}, logIn = false }) {
             </span>
           </a>
           <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-            <a
-              className="mr-5 text-gray-900 bg-neutral-50 rounded-lg p-1 cursor-pointer"
-              onClick={()=>{navUrl("/")}}
-            >
+            <NavLink to={"/"} className={({ isActive })=> 
+                isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
+            }>
               Inicio
-            </a>
-            <a
-              className="mr-5 hover:text-gray-900 cursor-pointer"
-              onClick={()=>{navUrl("/solicitarViaje")}}
-            >
+            </NavLink>
+
+            <NavLink to={"/solicitarViaje"} className={({isActive})=>
+              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
+            }>
               Solicitar Viaje
-            </a>
-            <a
-              className="mr-5 hover:text-gray-900 cursor-pointer"
-              onClick={()=>{navUrl("/sobreNosotros")}}
-            >
+            </NavLink>
+
+            <NavLink to={"/sobreNosotros"} className={({isActive})=>
+              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
+            }>
               Sobre Nosotros
-            </a>
-            <a
-              className="mr-5 hover:text-gray-900 cursor-pointer"
-              onClick={()=>{navUrl("/soporte")}}
-            >
+            </NavLink>
+
+            <NavLink to={"/soporte"} className={({isActive})=>
+              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
+            }>
               Soporte
-            </a>
-            <a
-              className="mr-5 hover:text-gray-900 cursor-pointer"
-              onClick={()=>{navUrl("/miCuenta")}}
-            >
+            </NavLink>
+            
+            <NavLink to={"/miCuenta"} className={({isActive})=>
+              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
+            }>
               Mi Cuenta
-            </a>
+            </NavLink>
           </nav>
-          <a onClick={()=>{navUrl("/login")}}>
-            <button className="inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2">
-              Login
-              <svg
+
+          <NavLink to={"/login"} className={({isActive})=>
+            isActive ? "inline-flex items-center text-black bg-white border-1 border-black rounded-lg py-1 px-3 focus:outline-none text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2" : "inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2"
+          }>
+            Login
+            <svg
                 fill="none"
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -98,12 +99,13 @@ function NavBar({ user = {}, logIn = false }) {
               >
                 <path d="M5 12h14M12 5l7 7-7 7"></path>
               </svg>
-            </button>
-          </a>
-          <a onClick={()=>{navUrl("/registro")}}>
-            <button className="inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white">
-              Registro
-              <svg
+          </NavLink>
+
+          <NavLink to={"/registro"} className={({isActive})=>
+            isActive ? "inline-flex items-center border-1 border-black rounded-lg py-1 px-3 focus:outline-none bg-gray-200 text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out" : "inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white"
+          }>
+            Registro
+            <svg
                 fill="none"
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -114,8 +116,8 @@ function NavBar({ user = {}, logIn = false }) {
               >
                 <path d="M5 12h14M12 5l7 7-7 7"></path>
               </svg>
-            </button>
-          </a>
+          </NavLink>
+          
           <button
             onClick={cambiarTema}
             id="boton-tema"

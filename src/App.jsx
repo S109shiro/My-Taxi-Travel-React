@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import SobreNosotros from "./pages/SobreNosotros";
 import SolicitarViaje from "./pages/SolicitarViaje";
+import Soporte from "./pages/Soporte";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 
 // Obtenemos la etiqueta a utilizar
@@ -51,6 +52,15 @@ root.render(
         </>
       }
       ></Route>
+
+      <Route path="/soporte" element={
+        <>
+          <NavBar />
+          <Soporte />
+          <Footer />          
+        </>
+      }>
+      </Route>
 
 
       <Route path="/registro" element={
