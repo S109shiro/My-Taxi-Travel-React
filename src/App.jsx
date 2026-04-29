@@ -7,6 +7,7 @@ import CommentsSection from "./pages/CommentsSection";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import SobreNosotros from "./pages/SobreNosotros";
+import SolicitarViaje from "./pages/SolicitarViaje";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 
 // Obtenemos la etiqueta a utilizar
@@ -29,6 +30,16 @@ root.render(
             <Footer />
           </>
         }
+      ></Route>
+
+
+      <Route path="/solicitarViaje" element={
+        <>
+          <NavBar />
+          <SolicitarViaje />
+          <Footer />
+        </>
+      }
       ></Route>
 
 

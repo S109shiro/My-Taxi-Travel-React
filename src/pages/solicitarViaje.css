@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root{
+    --tarjeta_color: white;
+    --color_demanda: #22C55E;
+    --color: black;
+    --color_boton_viaje: #2C2C2C;
+    --color_texto_boton: white;
+}
+
+.tarjeta {
+    background-color: var(--tarjeta_color);
+}
+
+.tarjeta h2, .informacion label, .informacion p{
+    color: var(--color);
+}
+
+.demanda{
+    background-color: var(--color_demanda);
+    color: var(--color)
+}
+
+.realizar_viaje{
+    background-color: var(--color_boton_viaje);
+    color: var(--color_texto_boton)
+}
+
+.realizar_viaje:hover{
+    background-color: #D1D5DB;
+    color: black;
+}
+
+.tema-oscuro{
+    --tarjeta_color: #181818;
+    --color_demanda: #16A34A;
+    --color: white;
+    --color_boton_viaje: #D1D5DB;
+    --color_texto_boton: black;
+}
+
+.tema-oscuro .realizar_viaje:hover{
+    background-color: #565656;
+    color: white;
+}
