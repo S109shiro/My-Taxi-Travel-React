@@ -1,13 +1,69 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./registro.css";
 
 
 function Registro() {
+  {/* Validador de fechas */}
+  function fechaMinima(){
+    const fecha = new Date();
+    fecha.setFullYear(fecha.getFullYear() - 100);
+    return fecha.toISOString().split("T")[0]
+  }
+
+  function fechaMaxima(){
+    const fecha = new Date();
+    fecha.setFullYear(fecha.getFullYear() - 18);
+    return fecha.toISOString().split("T")[0]
+  }
+
+
+  {/*Barra de titulo*/}
   const navUrl = useNavigate();
   useEffect(()=>{
     document.title = "My Taxi Travel - Registro";
+    
   })
+
+
+  {/*Creacion de usuario*/}
+  {/* Modificacion dinamica de datos con useStatem - form guarda datos predeterminados y set dinamico*/}
+  const [form, setForm] = useState({
+    nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    edad: 0,
+    numero_identificacion: null,
+    email: "",
+    sexo: "",
+    documento_identidad: "www.midocumento.com",
+    numero_telefono: "",
+    fecha_nacimiento: "",
+    calificacion_media: 0.0,
+    contrasena: ""
+
+  })
+  const [confirmarContrasena, setConfirmarContrasena] = useState("")
+
+
+
+  {/* Obtener datos desde el form con name y value, estos se definen en el form */}
+  const getDataForm = (e) =>{
+    console.log(e.target.value);
+    setForm({
+      ...form, [e.target.name]: e.target.value
+    })
+  }
+
+
+  {/* Envio informacion al back */}
+  const handleSubmit = async (e) =>{
+    e.preventDefault();
+  }
+
+
+
+
 
   return (
     <>
@@ -35,8 +91,10 @@ function Registro() {
                 <input
                   type="text"
                   id="name"
-                  name="name"
+                  name="nombre"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.nombre}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -45,8 +103,10 @@ function Registro() {
                 <input
                   type="text"
                   id="first-last-name"
-                  name="first-last-name"
+                  name="primer_apellido"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.primer_apellido}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -55,8 +115,10 @@ function Registro() {
                 <input
                   type="text"
                   id="second-last-name"
-                  name="second-last-name"
+                  name="segundo_apellido"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.segundo_apellido}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -64,11 +126,13 @@ function Registro() {
                 <label htmlFor="Edad">Edad</label>
                 <input
                   type="number"
-                  min={0}
+                  min={18}
                   max={100}
                   id="age"
-                  name="age"
+                  name="edad"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.edad}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -77,8 +141,10 @@ function Registro() {
                 <input
                   type="number"
                   id="document-number"
-                  name="document-number"
+                  name="documento_identidad"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.documento_identidad}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -89,6 +155,8 @@ function Registro() {
                   id="email"
                   name="email"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.email}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -97,8 +165,10 @@ function Registro() {
                 <input
                   type="number"
                   id="phone-number"
-                  name="phone-number"
+                  name="numero_telefono"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.numero_telefono}
+                  onChange={getDataForm}
                   required
                 />   
               </div>  
@@ -107,8 +177,12 @@ function Registro() {
                 <input
                   type="date"
                   id="date-birth"
-                  name="date-birth"
+                  name="fecha_nacimiento"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  min={fechaMinima()}
+                  max={fechaMaxima()}
+                  value={form.fecha_nacimiento}
+                  onChange={getDataForm}
                   required
                 />
               </div>
@@ -117,18 +191,30 @@ function Registro() {
                 <input
                   type="password"
                   id="password"
-                  name="password"
+                  name="contrasena"
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  value={form.contrasena}
+                  onChange={getDataForm}
                   required
                 />
               </div>
               <div className="relative mb-4">
-                <label htmlFor="Confirme su contraseña">Confirme su contraseña</label>
+                <label htmlFor="Confirme su contraseña">{confirmarContrasena && form.contrasena !== confirmarContrasena
+                  ? "Las contraseñas no coinciden"
+                  : "Confirme su contraseña"
+                }
+                  </label>
                 <input
                   type="password"
                   id="confirm-password"
-                  name="confirm-password"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  name="confirmar_contrasena"
+                  className={`w-full rounded border py-1 px-3 outline-none transition-colors duration-200 ease-in-out
+                  ${form.contrasena !== confirmarContrasena
+                    ? "bg-red-100 border-red-500 focus:border-red-500 focus:ring-red-200"
+                    : "bg-green-100 border-gray-300 focus:border-indigo-500 focus:ring-indigo-200"
+                  } focus:ring-2 text-base text-gray-700 leading-8`}
+                  value={confirmarContrasena}
+                  onChange={(e)=> setConfirmarContrasena(e.target.value)}
                   required
                 />
               </div>
