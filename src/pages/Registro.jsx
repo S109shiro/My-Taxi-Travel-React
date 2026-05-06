@@ -76,7 +76,7 @@ function Registro() {
     // Para que despues de 10s se cancele el fetch 
     const timeout = setTimeout(()=>{
       controller.abort()
-    }, 1500)
+    }, 2000)
 
     try{
       // Peticion al back (fetch)

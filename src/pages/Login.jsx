@@ -4,7 +4,8 @@ import "./login.css";
 // Imagen del login
 import imgLogin from "../assets/imgLogin/login-image.jpg"
 import logo from "../../public/icon.svg"
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -13,32 +14,59 @@ function Login() {
     document.title = "My Taxi Travel - Login";
   })
 
+  const navUrl = useNavigate();
+
   {/* Estructura para el login */}
   const [login, setLogin] = useState({
     email: "",
     contrasena: ""
   })
 
+  const [cargando, setCargando] = useState(false)
+
   {/* Obtener datos desde el form con name y value, estos se definen en el form */}
   const getDataLogin = (e) =>{
-    console.log(e.target.value);
+    //console.log(e.target.value);
     setLogin({
       ...login, [e.target.name]: e.target.value
     })
   }
 
+  const handleSubmit = async (e)=>{
+    e.preventDefault()
 
+    setCargando(true)
 
+    const controller = new AbortController()
 
+    const timeout = setTimeout(()=>{
+      controller.abort()
+    }, 2000)
 
+    try{
+      const response = await fetch("http://localhost:8080/usuario/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(login),
+        signal: controller.signal
+      })
+      clearTimeout(timeout)
+      console.log("Pasamos fetch")
+      const data = await response.text()
+      setCargando(false)
+      alert(data)
+      navUrl("/")  // Si ta mal aun asi llega aca
 
+    }catch(e){
+      if(e.name === "AbortError"){
+        alert("El servidor tardo demasiado en responder, intentalo mas tarde")
+        setCargando(false)
+      }
+    }
 
-
-
-
-
-
-
+  }
 
 
 
@@ -64,7 +92,7 @@ function Login() {
             <h1 className="titulo text-xl font-semibold text-gray-700">My Taxi Travel</h1>
           </div>
 
-          <form className="flex flex-col items-center space-y-5 w-full max-w-sm">
+          <form className="flex flex-col items-center space-y-5 w-full max-w-sm" onSubmit={handleSubmit}>
             <input
               id="email"
               name="email"
@@ -102,8 +130,8 @@ function Login() {
               </label>
             </div>
 
-            <button className="boton uppercase w-full py-2 rounded-md text-white bg-[var(--colorBoton)] hover:bg-gray-300 font-medium transition cursor-pointer">
-              Ingresar
+            <button className="boton uppercase w-full py-2 rounded-md text-white bg-[var(--colorBoton)] hover:bg-gray-300 font-medium transition cursor-pointer" type="submit" disabled={cargando}>
+              {cargando ? "Ingresando..." : "Ingresar"}
             </button>
 
             <a
