@@ -4,7 +4,7 @@ import "./login.css";
 // Imagen del login
 import imgLogin from "../assets/imgLogin/login-image.jpg"
 import logo from "../../public/icon.svg"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 
@@ -12,6 +12,39 @@ function Login() {
   useEffect(()=>{
     document.title = "My Taxi Travel - Login";
   })
+
+  {/* Estructura para el login */}
+  const [login, setLogin] = useState({
+    email: "",
+    contrasena: ""
+  })
+
+  {/* Obtener datos desde el form con name y value, estos se definen en el form */}
+  const getDataLogin = (e) =>{
+    console.log(e.target.value);
+    setLogin({
+      ...login, [e.target.name]: e.target.value
+    })
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   return (
     <main className="flex-grow flex justify-center items-center px-4 py-10 mt-30 mb-30">
@@ -33,16 +66,24 @@ function Login() {
 
           <form className="flex flex-col items-center space-y-5 w-full max-w-sm">
             <input
-              type="text"
+              id="email"
+              name="email"
+              type="email"
               placeholder="Correo Electrónico"
               className="w-full bg-gray-100 rounded-lg px-5 py-2 focus:outline-none text-black placeholder:text-gray-600 placeholder:opacity-50"
+              value={login.email}
+              onChange={getDataLogin}
               required
             />
 
             <input
+              id="contrasena"
+              name="contrasena"
               type="password"
               placeholder="Contraseña"
               className="w-full bg-gray-100 rounded-lg px-5 py-2 focus:outline-none text-black placeholder:text-gray-600 placeholder:opacity-50"
+              value={login.contrasena}
+              onChange={getDataLogin}
               required
             />
 

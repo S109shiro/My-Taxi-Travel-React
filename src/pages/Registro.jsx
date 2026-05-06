@@ -33,7 +33,7 @@ function Registro() {
     primer_apellido: "",
     segundo_apellido: "",
     edad: 0,
-    numero_identificacion: null,
+    numero_identificacion: 0,
     email: "",
     sexo: "",
     documento_identidad: "www.midocumento.com",
@@ -43,13 +43,15 @@ function Registro() {
     contrasena: ""
 
   })
+  // Para comparar contrasenas
   const [confirmarContrasena, setConfirmarContrasena] = useState("")
-
+  // Para hacer que esta cargando
+  const [cargando, setCargando] = useState(false)
 
 
   {/* Obtener datos desde el form con name y value, estos se definen en el form */}
   const getDataForm = (e) =>{
-    console.log(e.target.value);
+    //console.log(e.target.value);
     setForm({
       ...form, [e.target.name]: e.target.value
     })
@@ -58,12 +60,59 @@ function Registro() {
 
   {/* Envio informacion al back */}
   const handleSubmit = async (e) =>{
-    e.preventDefault();
+    e.preventDefault(); // Evita que se recargue la pagina al darle Submit
+
+    if(form.contrasena != confirmarContrasena){
+      alert("Las contrasenas son distintas");
+      return // En caso de entrar detiene la ejecucion y no sigue hasta q sea falsa la condicion
+    }
+
+    // Comienza a cargar
+    setCargando(true)
+
+    // Para poder cancelar el fetch
+    const controller = new AbortController() 
+
+    // Para que despues de 10s se cancele el fetch 
+    const timeout = setTimeout(()=>{
+      controller.abort()
+    }, 1500)
+
+    try{
+      // Peticion al back (fetch)
+      const response = await fetch("http://localhost:8080/usuario/create", {
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form),  // Convierte el objeto a texto json
+        signal: controller.signal  // Indicamos que este fetch hay que cancelar
+      })
+      clearTimeout(timeout)  // Cancelamos el tiempo para completar el  fetch
+
+      if(!response.ok){
+        const data = await response.text();
+        if(data.includes("UKl9rsavvdyd3hrpyttoh1mh744")){
+          alert("Error. El numero de identidad ingresado ya esta en uso")
+        }else if (data.includes("UKspmnyb4dsul95fjmr5kmdmvub")){
+          alert("Error. El correo electronico ingresado ya esta en uso")
+        }
+        setCargando(false)
+        return
+      }
+      const data = await response.text()
+      setCargando(false)
+      alert(data + " - Ahora ya puedes iniciar sesion")
+      navUrl("/login")
+
+
+    }catch(e){
+      if(e.name === "AbortError"){   // Este error lo lanza controller.abort() en caso que pasen 5 segundos
+        alert("El servidor tardo demasiado en responder, intentalo mas tarde")
+        setCargando(false)
+      }
+    }
   }
-
-
-
-
 
   return (
     <>
@@ -81,7 +130,7 @@ function Registro() {
               disfrutando de todo lo que My Taxi Travel tiene para ti.
             </p>
           </div>
-          <form className="formulario lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 rounded shadow-lg">
+          <form className="formulario lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 rounded shadow-lg" onSubmit={handleSubmit}>
             <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
               Formulario de registro
             </h2>
@@ -137,13 +186,24 @@ function Registro() {
                 />
               </div>
               <div className="relative mb-4">
+                <label htmlFor="Sexo">Sexo</label>
+                <select id="sexo" name="sexo" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" value={form.sexo} onChange={getDataForm} required>
+                  <option value="" disabled selected>Elige tu sexo</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Otro">Otro</option>
+                </select>
+                
+              </div>
+              <div className="relative mb-4">
                 <label htmlFor="Numero de documento">Numero de documento</label>
                 <input
                   type="number"
                   id="document-number"
-                  name="documento_identidad"
+                  name="numero_identificacion"
+                  max={2147483647}
                   className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  value={form.documento_identidad}
+                  value={form.numero_identificacion}
                   onChange={getDataForm}
                   required
                 />
@@ -256,8 +316,8 @@ function Registro() {
               </div>
             </div>
 
-            <button className="text-white bg-[#2C2C2C] hover:bg-gray-300 hover:text-black border-0 py-2 px-8 focus:outline-none rounded text-lg cursor-pointer">
-              Registrarme
+            <button className="text-white bg-[#2C2C2C] hover:bg-gray-300 hover:text-black border-0 py-2 px-8 focus:outline-none rounded text-lg cursor-pointer" type="submit" disabled={cargando}>
+              {cargando ? "Registrando..." : "Registrarse"}
             </button>
             <p className="text-xs text-gray-500 mt-3">
               <a
