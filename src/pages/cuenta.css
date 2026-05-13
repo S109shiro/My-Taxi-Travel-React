@@ -1,0 +1,28 @@
+:root{
+    --colorTitulo: black;
+    --colorTexto: #111827;
+}
+
+.encabezado_usuario p{
+    color: var(--colorTitulo);
+}
+
+.carta_usuario h2{
+    color: var(--colorTitulo)
+}
+
+.carta_usuario p{
+    color: var(--colorTexto)
+}
+
+
+
+.tema-oscuro{
+    --colorTitulo: white;
+    --colorTexto: #E5E7EB;
+}
+
+.tema-oscuro .carta_usuario:hover{
+    --colorTitulo: black;
+    --colorTexto: #111827;
+}

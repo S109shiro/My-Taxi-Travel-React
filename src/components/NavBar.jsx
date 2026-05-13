@@ -8,11 +8,11 @@ import "./styleHF.css";
 import cambiarTema from "./bCambiarTema";
 
 // importacion para los enlaces del nav
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 // Props: Obtiene el usuario y verifica si esta logueado
-function NavBar({ user = {}, logIn = false }) {
+function NavBar() {
   // Constante para el useNavigate
   const navigate = useNavigate();
   // Funcion para reutilizar en cada link
@@ -20,15 +20,23 @@ function NavBar({ user = {}, logIn = false }) {
     navigate(url);
   }
 
-  // Control sobre navbar en la version mobile
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  function navMobile(){
-    if(!isMenuOpen){
-      return setIsMenuOpen(true);
-    }else{
-      return setIsMenuOpen(false)
-    }
-  }
+  //Logueo con token y nombre
+  const [nombre, setNombre] = useState(localStorage.getItem("nombreUsuario"));
+
+  useEffect(() => {
+    // Función que actualiza el nombre cuando cambia el localStorage
+    const actualizarNombre = () => {
+      setNombre(localStorage.getItem("nombreUsuario"));
+    };
+
+    window.addEventListener("storage", actualizarNombre);
+
+    return () => {
+      window.removeEventListener("storage", actualizarNombre);
+    };
+  }, []);
+
+  const [dropdown, setDropdown] = useState(false); // Manejamos el dropdown
 
   return (
     <>
@@ -36,7 +44,9 @@ function NavBar({ user = {}, logIn = false }) {
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a
             className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
-            onClick={()=>{navUrl("/")}}
+            onClick={() => {
+              navUrl("/");
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -53,42 +63,62 @@ function NavBar({ user = {}, logIn = false }) {
             </span>
           </a>
           <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-            <NavLink to={"/"} className={({ isActive })=> 
-                isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
-            }>
+            <NavLink
+              to={"/"}
+              className={({ isActive }) =>
+                isActive
+                  ? "mr-5 text-black bg-neutral-50 rounded-lg p-1"
+                  : "mr-5 hover:text-gray-900 rounded-lg p-1"
+              }
+            >
               Inicio
             </NavLink>
 
-            <NavLink to={"/solicitarViaje"} className={({isActive})=>
-              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
-            }>
+            <NavLink
+              to={"/solicitarViaje"}
+              className={({ isActive }) =>
+                isActive
+                  ? "mr-5 text-black bg-neutral-50 rounded-lg p-1"
+                  : "mr-5 hover:text-gray-900 rounded-lg p-1"
+              }
+            >
               Solicitar Viaje
             </NavLink>
 
-            <NavLink to={"/sobreNosotros"} className={({isActive})=>
-              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
-            }>
+            <NavLink
+              to={"/sobreNosotros"}
+              className={({ isActive }) =>
+                isActive
+                  ? "mr-5 text-black bg-neutral-50 rounded-lg p-1"
+                  : "mr-5 hover:text-gray-900 rounded-lg p-1"
+              }
+            >
               Sobre Nosotros
             </NavLink>
 
-            <NavLink to={"/soporte"} className={({isActive})=>
-              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
-            }>
+            <NavLink
+              to={"/soporte"}
+              className={({ isActive }) =>
+                isActive
+                  ? "mr-5 text-black bg-neutral-50 rounded-lg p-1"
+                  : "mr-5 hover:text-gray-900 rounded-lg p-1"
+              }
+            >
               Soporte
-            </NavLink>
-            
-            <NavLink to={"/miCuenta"} className={({isActive})=>
-              isActive ? "mr-5 text-black bg-neutral-50 rounded-lg p-1" : "mr-5 hover:text-gray-900 rounded-lg p-1"
-            }>
-              Mi Cuenta
             </NavLink>
           </nav>
 
-          <NavLink to={"/login"} className={({isActive})=>
-            isActive ? "inline-flex items-center text-black bg-white border-1 border-black rounded-lg py-1 px-3 focus:outline-none text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2" : "inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2"
-          }>
-            Login
-            <svg
+          {!nombre && (
+            <NavLink
+              to={"/login"}
+              className={({ isActive }) =>
+                isActive
+                  ? "inline-flex items-center text-black bg-white border-1 border-black rounded-lg py-1 px-3 focus:outline-none text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2"
+                  : "inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2"
+              }
+            >
+              Login
+              <svg
                 fill="none"
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -99,13 +129,53 @@ function NavBar({ user = {}, logIn = false }) {
               >
                 <path d="M5 12h14M12 5l7 7-7 7"></path>
               </svg>
-          </NavLink>
+            </NavLink>
+          )}
+          {nombre ? (
+            <div className="relative mt-4 md:mt-0 mr-2">
+              <button
+                onClick={() => setDropdown(!dropdown)}
+                className="inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 text-base cursor-pointer hover:bg-gray-100 transition delay-100 ease-in-out"
+              >
+                👤 {nombre}
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  className="w-4 h-4 ml-1"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </button>
 
-          <NavLink to={"/registro"} className={({isActive})=>
-            isActive ? "inline-flex items-center border-1 border-black rounded-lg py-1 px-3 focus:outline-none bg-gray-200 text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out" : "inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white"
-          }>
-            Registro
-            <svg
+              {dropdown && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={() => {
+                      navUrl("/cuenta");
+                      setDropdown(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg"
+                  >
+                    Mi Cuenta
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <NavLink
+              to={"/registro"}
+              className={({ isActive }) =>
+                isActive
+                  ? "inline-flex items-center border-1 border-black rounded-lg py-1 px-3 focus:outline-none bg-gray-200 text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out"
+                  : "inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white"
+              }
+            >
+              Registro
+              <svg
                 fill="none"
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -116,8 +186,9 @@ function NavBar({ user = {}, logIn = false }) {
               >
                 <path d="M5 12h14M12 5l7 7-7 7"></path>
               </svg>
-          </NavLink>
-          
+            </NavLink>
+          )}
+
           <button
             onClick={cambiarTema}
             id="boton-tema"

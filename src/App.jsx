@@ -9,6 +9,9 @@ import Registro from "./pages/Registro";
 import SobreNosotros from "./pages/SobreNosotros";
 import SolicitarViaje from "./pages/SolicitarViaje";
 import Soporte from "./pages/Soporte";
+import Cuenta from "./pages/Cuenta";
+import FormularioUsuario from "./components/FormUser";
+import ViajesUsuario from "./pages/viajesUsuario";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 
 // Obtenemos la etiqueta a utilizar
@@ -43,7 +46,6 @@ root.render(
       }
       ></Route>
 
-
       <Route path="/sobreNosotros" element={
         <>
           <NavBar />
@@ -62,7 +64,6 @@ root.render(
       }>
       </Route>
 
-
       <Route path="/registro" element={
         <>
           <NavBar />
@@ -79,9 +80,36 @@ root.render(
           <Footer />
         </>
       }
-
       ></Route>
-      
+
+      <Route path="/cuenta" element={
+        <>
+          <NavBar />
+          <Cuenta />
+          <Footer />
+        </>
+      }
+      ></Route>
+
+      <Route path="/cuenta/editarUsuario" element={
+        <>
+          <NavBar />
+          <FormularioUsuario />
+          <Footer />
+        </>
+      }
+      ></Route>
+
+      <Route path="/cuenta/viajesUsuario" element={
+        <>
+          <NavBar />
+          <ViajesUsuario />
+          <Footer />
+        </>
+      }
+      ></Route>
+
+
     </Routes>
   </HashRouter>
 );

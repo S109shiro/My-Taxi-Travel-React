@@ -53,12 +53,19 @@ function Login() {
         signal: controller.signal
       })
       clearTimeout(timeout)
-      console.log("Pasamos fetch")
-      const data = await response.text()
-      setCargando(false)
-      alert(data)
-      navUrl("/")  // Si ta mal aun asi llega aca
 
+      const data = await response.json() 
+      if(!response.ok){
+        setCargando(false)
+        alert("Error. El usuario no existe o ingresaste credenciales incorrectas.")
+        return
+      }else{
+        localStorage.setItem("nombreUsuario", data.nombreUsuario) // Guardamos token y nombre de usuario al iniciar sesion
+        localStorage.setItem("token", data.token)
+        alert("Bienvenid@ " + data.nombreUsuario)
+        window.dispatchEvent(new Event("storage")) //dispara el evento manualmente
+        navUrl("/") 
+      }
     }catch(e){
       if(e.name === "AbortError"){
         alert("El servidor tardo demasiado en responder, intentalo mas tarde")
@@ -67,11 +74,6 @@ function Login() {
     }
 
   }
-
-
-
-
-
 
   
   return (

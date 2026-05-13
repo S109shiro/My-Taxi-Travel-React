@@ -1,0 +1,38 @@
+:root{
+    --colorTitulo: black;
+    --colorTexto: #111827;
+    --encabezadoTabla: #F3F4F6;
+    --colorItems: white;
+}
+
+.contenedor h1{
+    color: var(--colorTitulo);
+}
+
+.contenedor p{
+    color: var(--colorTexto);
+}
+
+.encabezado{
+    background-color: var(--encabezadoTabla);
+}
+
+.items{
+    background-color: var(--colorItems);
+    color: var(--colorTexto);
+}
+
+.b-detalles{
+    margin: 0 0.5rem 0 0.5rem;
+}
+
+.tema-oscuro .b-detalles{
+    border: 1px solid #D1D5DB;
+    border-radius: 5px;
+}
+
+.tema-oscuro{
+    --colorTitulo: white;
+    --colorTexto: white;
+    --colorItems: #1F2937;
+}
