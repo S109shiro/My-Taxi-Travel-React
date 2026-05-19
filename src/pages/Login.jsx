@@ -61,6 +61,7 @@ function Login() {
       }else{
         const data = await response.json()
         localStorage.setItem("nombreUsuario", data.nombreUsuario) // Guardamos token y nombre de usuario al iniciar sesion
+        localStorage.setItem("idUser", data.idUser)
         localStorage.setItem("token", data.token)
         alert("Bienvenid@ " + data.nombreUsuario)
         window.dispatchEvent(new Event("storage")) //dispara el evento manualmente

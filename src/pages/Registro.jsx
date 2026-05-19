@@ -17,6 +17,19 @@ function Registro() {
     return fecha.toISOString().split("T")[0]
   }
 
+  const validarContrasena = (contrasena) => {
+    if(contrasena.length < 4) {
+      return "La contraseña debe tener al menos 4 caracteres"
+    }
+    if(!/[a-zA-Z]/.test(contrasena)) {
+      return "La contraseña debe tener al menos una letra"
+    }
+    if(!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(contrasena)) {
+      return "La contraseña debe tener al menos un signo especial"
+    }
+    return null 
+  }
+
 
   {/*Barra de titulo*/}
   const navUrl = useNavigate();
@@ -65,6 +78,13 @@ function Registro() {
     if(form.contrasena != confirmarContrasena){
       alert("Las contrasenas son distintas");
       return // En caso de entrar detiene la ejecucion y no sigue hasta q sea falsa la condicion
+    }
+    
+    // Validar contrasena
+    const error = validarContrasena(form.contrasena)
+    if(error){
+      alert(error)
+      return
     }
 
     // Comienza a cargar

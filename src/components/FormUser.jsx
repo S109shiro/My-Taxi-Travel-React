@@ -1,11 +1,144 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"
 
 function FormUser() {
+  // Obtener id del usuario
+  const idUsuario = localStorage.getItem("idUser")
+
+  const navigate = useNavigate()
+  const navUrl = (url) => navigate(url)
+
+  function fechaMinima() {
+    const fecha = new Date()
+    fecha.setFullYear(fecha.getFullYear() - 100)
+    return fecha.toISOString().split("T")[0]
+  }
+
+  function fechaMaxima() {
+    const fecha = new Date()
+    fecha.setFullYear(fecha.getFullYear() - 18)
+    return fecha.toISOString().split("T")[0]
+  }
+
+  const validarContrasena = (contrasena) => {
+    if(contrasena.length < 4) {
+      return "La contraseña debe tener al menos 4 caracteres"
+    }
+    if(!/[a-zA-Z]/.test(contrasena)) {
+      return "La contraseña debe tener al menos una letra"
+    }
+    if(!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(contrasena)) {
+      return "La contraseña debe tener al menos un signo especial"
+    }
+    return null 
+  }
+
+  
+  const [form, setForm] = useState({
+    nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    edad: 0,
+    numero_identificacion: 0,
+    email: "",
+    sexo: "",
+    numero_telefono: "",
+    fecha_nacimiento: "",
+    contrasena: ""
+  })
+
+
+  const [confirmarContrasena, setConfirmarContrasena] = useState("")
+  const [cargando, setCargando] = useState(false)
+
+  const getDataForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if(form.contrasena !== confirmarContrasena) {
+      alert("Las contraseñas no coinciden")
+      return
+    }
+
+    // Validar contrasena
+    const error = validarContrasena(form.contrasena)
+    if(error){
+      alert(error)
+      return
+    }
+
+    setCargando(true)
+
+    // Se realiza el PUT al enviar la actualizacion de datos
+    // Creacion del objeto con los nuevos datos indicandolos que son valores sacados del formulario
+    const bodyRequestUpdate = {
+      nombre: form.nombre,
+      primer_apellido: form.primer_apellido,
+      segundo_apellido: form.segundo_apellido,
+      edad: form.edad,
+      numero_identificacion: form.numero_identificacion,
+      email: form.email,
+      sexo: form.sexo,
+      documento_identidad: "www.midocumento.com",
+      numero_telefono: form.numero_telefono,
+      fecha_nacimiento: form.fecha_nacimiento,
+      contrasena: form.contrasena
+    }
+    console.log(bodyRequestUpdate)
+
+
+  }
+
+
   useEffect(()=>{
       document.title = "My Taxi Travel - Actualizar datos"
-  })
+
+      // Obtener los datos del usuario con el ID
+      const cargarDatosUsuario = async ()=>{
+        try{
+          const response = await fetch(`http://localhost:8080/usuario/get/${idUsuario}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+
+          // Obtenemos los datos y se ponen en el formulario
+          // Datos consultados en JSON
+          const data = await response.json()
+          // Creamos un objeto con los datos recuperados
+          setForm({
+            nombre: data.nombre,
+            primer_apellido: data.primer_apellido,
+            segundo_apellido: data.segundo_apellido,
+            edad: data.edad,
+            numero_identificacion: data.numero_identificacion,
+            email: data.email,
+            sexo: data.sexo,
+            numero_telefono: data.numero_telefono,
+            fecha_nacimiento: data.fecha_nacimiento ? data.fecha_nacimiento.split("T")[0] : "",
+            contrasena: ""
+          })
+          }
+          catch(e){
+            console.error(e)
+          }
+
+      }
+
+      cargarDatosUsuario()
+  }, [])
+
+
   
-  // Arreglar variables
+  
+
+
+
+
+
   return (
     <>
       <form
@@ -128,11 +261,9 @@ function FormUser() {
               id="date-birth"
               name="fecha_nacimiento"
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              min={fechaMinima()}
-              max={fechaMaxima()}
               value={form.fecha_nacimiento}
               onChange={getDataForm}
-              required
+              readOnly
             />
           </div>
           <div className="relative mb-4">
@@ -171,62 +302,13 @@ function FormUser() {
             />
           </div>
         </div>
-
-        <div className="elementos_separados">
-          <div className="relative mb-4">
-            <label>Adjuntar documento de identidad</label>
-            <input
-              type="file"
-              name=""
-              id=""
-              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              accept="application/pdf"
-              required
-            />
-          </div>
-
-          <div className="relative mb-4">
-            <input
-              type="checkbox"
-              name="noticias"
-              id="noticias"
-              className="accent-[var(--colorTitulo)] cursor-pointer"
-            />
-            <label for="noticias" className="ml-2">
-              Deseo recibir noticias a mi correo electronico
-            </label>
-          </div>
-          <div className="relative mb-4">
-            <input
-              type="checkbox"
-              name="terminos"
-              id="terminos"
-              className="accent-[var(--colorTitulo)] cursor-pointer"
-              required
-            />
-            <label for="terminos" className="ml-2">
-              Acepto los terminos y condiciones
-            </label>
-          </div>
-        </div>
-
         <button
           className="text-white bg-[#2C2C2C] hover:bg-gray-300 hover:text-black border-0 py-2 px-8 focus:outline-none rounded text-lg cursor-pointer"
           type="submit"
           disabled={cargando}
         >
-          {cargando ? "Registrando..." : "Registrarse"}
+          {cargando ? "Actualizando..." : "Actualizar"}
         </button>
-        <p className="text-xs text-gray-500 mt-3">
-          <a
-            onClick={() => {
-              navUrl("/login");
-            }}
-            className="hover:underline cursor-pointer"
-          >
-            Ya tengo una cuenta
-          </a>
-        </p>
       </form>
     </>
   );
