@@ -71,9 +71,11 @@ function FormUser() {
 
     setCargando(true)
 
-    // Se realiza el PUT al enviar la actualizacion de datos
+    // Se inicia el PUT al enviar la actualizacion de datos
+
     // Creacion del objeto con los nuevos datos indicandolos que son valores sacados del formulario
     const bodyRequestUpdate = {
+      id_usuario: idUsuario,
       nombre: form.nombre,
       primer_apellido: form.primer_apellido,
       segundo_apellido: form.segundo_apellido,
@@ -86,7 +88,23 @@ function FormUser() {
       fecha_nacimiento: form.fecha_nacimiento,
       contrasena: form.contrasena
     }
-    console.log(bodyRequestUpdate)
+
+    // FETH PUT
+    try {
+      const response = await fetch("http://localhost:8080/usuario/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bodyRequestUpdate)
+      })
+      console.log(response)
+      navUrl("/")  // Errores ebn la actualizacion del nombre
+      
+    } catch (error) {
+      console.log(error)
+      setCargando(false)
+    }
 
 
   }
@@ -125,9 +143,8 @@ function FormUser() {
           catch(e){
             console.error(e)
           }
-
       }
-
+      // Ejecutamos el fetch
       cargarDatosUsuario()
   }, [])
 
