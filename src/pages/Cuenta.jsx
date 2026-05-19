@@ -12,17 +12,16 @@ function Cuenta() {
   function navUrl(url) {
     navigate(url);
   }
+
+  const nameUser = localStorage.getItem("nombreUsuario")
   return (
     <>
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-24 mx-auto flex flex-wrap">
           <div className="encabezado_usuario lg:w-1/2 w-full mb-10 lg:mb-0 rounded-lg overflow-hidden">
             <p className="text-gray-900 text-lg title-font font-medium mb-3">
-              Bienvenido
+              Bienvenid@ {nameUser}
             </p>
-
-            <p className="leading-relaxed text-base">Usuario001</p>
-
             <img
               alt="feature"
               className="object-cover object-center h-100px rounded-[50%] hover:shadow-lg transition duration-300"
@@ -127,7 +126,12 @@ function Cuenta() {
               </div>
             </div>
 
-            <div className="carta_usuario flex flex-col mb-10 lg:items-start items-center rounded hover:shadow-lg p-3 rounded-xl hover:bg-red-100 cursor-pointer transition duration-300 ease-in-out">
+            <div className="carta_usuario flex flex-col mb-10 lg:items-start items-center rounded hover:shadow-lg p-3 rounded-xl hover:bg-red-100 cursor-pointer transition duration-300 ease-in-out" onClick={()=>{
+              localStorage.removeItem("token")
+              localStorage.removeItem("nombreUsuario")
+              window.dispatchEvent(new Event("storage"))
+              navUrl("/login")
+            }}>
               <div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-red-100 text-indigo-500 mb-5">
                 <svg
                   fill="none"

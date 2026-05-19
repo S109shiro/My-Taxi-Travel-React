@@ -41,7 +41,7 @@ function Login() {
 
     const timeout = setTimeout(()=>{
       controller.abort()
-    }, 2000)
+    }, 1000)
 
     try{
       const response = await fetch("http://localhost:8080/usuario/login", {
@@ -53,13 +53,13 @@ function Login() {
         signal: controller.signal
       })
       clearTimeout(timeout)
-
-      const data = await response.json() 
+     
       if(!response.ok){
         setCargando(false)
         alert("Error. El usuario no existe o ingresaste credenciales incorrectas.")
         return
       }else{
+        const data = await response.json()
         localStorage.setItem("nombreUsuario", data.nombreUsuario) // Guardamos token y nombre de usuario al iniciar sesion
         localStorage.setItem("token", data.token)
         alert("Bienvenid@ " + data.nombreUsuario)
