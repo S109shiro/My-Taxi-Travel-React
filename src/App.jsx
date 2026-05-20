@@ -5,6 +5,8 @@ import Footer from "./components/Footer";
 import Hero from "./pages/Hero";
 import CommentsSection from "./pages/CommentsSection";
 import Login from "./pages/Login";
+import LoginAdmin from "./pages/LoginAdmin";
+import Panel from "./pages/Panel";
 import Registro from "./pages/Registro";
 import SobreNosotros from "./pages/SobreNosotros";
 import SolicitarViaje from "./pages/SolicitarViaje";
@@ -78,6 +80,22 @@ root.render(
           <NavBar />
           <Login />
           <Footer />
+        </>
+      }
+      ></Route>
+
+      <Route path="/loginAdmin" element={
+        <>
+          <NavBar />
+          <LoginAdmin />
+          <Footer />
+        </>
+      }
+      ></Route>
+
+      <Route path="/panel" element={
+        <>
+          <Panel />
         </>
       }
       ></Route>

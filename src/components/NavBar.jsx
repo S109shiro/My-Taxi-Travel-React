@@ -36,7 +36,8 @@ function NavBar() {
     };
   }, []);
 
-  const [dropdown, setDropdown] = useState(false); // Manejamos el dropdown
+  const [dropdownUsuario, setDropdownUsuario] = useState(false); // Manejamos el dropdown del usuario
+  const [dropdownLogin, setDropdownLogin] = useState(false); // Manejamos el dropdown del login del usuario y administrador
 
   return (
     <>
@@ -109,32 +110,53 @@ function NavBar() {
           </nav>
 
           {!nombre && (
-            <NavLink
-              to={"/login"}
-              className={({ isActive }) =>
-                isActive
-                  ? "inline-flex items-center text-black bg-white border-1 border-black rounded-lg py-1 px-3 focus:outline-none text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2"
-                  : "inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out mr-2"
-              }
-            >
-              Login
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 ml-1"
-                viewBox="0 0 24 24"
+            <div className="relative mt-4 md:mt-0 mr-2">
+              <button
+                onClick={() => setDropdownLogin(!dropdownLogin)}
+                className="inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-100 hover:text-black text-base cursor-pointer transition delay-100 ease-in-out"
               >
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
-            </NavLink>
+                Login
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  className="w-4 h-4 ml-1"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </button>
+              
+              {dropdownLogin && (
+                <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={() => {
+                      navUrl("/login");
+                      setDropdownLogin(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg"
+                  >
+                    👤 Usuario
+                  </button>
+                  <button
+                    onClick={() => {
+                      navUrl("/loginAdmin");
+                      setDropdownLogin(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-b-lg"
+                  >
+                    🛡️ Administrador
+                  </button>
+                </div>
+              )}
+            </div>
           )}
           {nombre ? (
             <div className="relative mt-4 md:mt-0 mr-2">
               <button
-                onClick={() => setDropdown(!dropdown)}
+                onClick={() => setDropdownUsuario(!dropdownUsuario)}
                 className="inline-flex items-center bg-gray-300 border-1 border-black rounded-lg py-1 px-3 text-base cursor-pointer hover:bg-gray-100 transition delay-100 ease-in-out"
               >
                 👤 {nombre}
@@ -151,12 +173,12 @@ function NavBar() {
                 </svg>
               </button>
 
-              {dropdown && (
+              {dropdownUsuario && (
                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                   <button
                     onClick={() => {
                       navUrl("/cuenta");
-                      setDropdown(false);
+                      setDropdownUsuario(false);
                     }}
                     className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg"
                   >

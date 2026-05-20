@@ -2,19 +2,19 @@
 import "./login.css";
 
 // Imagen del login
-import imgLogin from "../assets/imgLogin/login-image.jpg"
-import logo from "../../public/icon.svg"
+import imgLogin from "../assets/imgLogin/login_admin.jpg"
+import logo from "../../public/iconAdmin.svg"
 import { useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 
 
 
-function Login() {
+function LoginAdmin() {
   useEffect(()=>{
-    document.title = "My Taxi Travel - Login";
+    document.title = "My Taxi Travel - Login Administrador";
   })
 
-  const navUrl = useNavigate();
+  const navigate = useNavigate();
 
   {/* Estructura para el login */}
   const [login, setLogin] = useState({
@@ -27,7 +27,6 @@ function Login() {
 
   {/* Obtener datos desde el form con name y value, estos se definen en el form */}
   const getDataLogin = (e) =>{
-    //console.log(e.target.value);
     setLogin({
       ...login, [e.target.name]: e.target.value
     })
@@ -45,7 +44,7 @@ function Login() {
     }, 1000)
 
     try{
-      const response = await fetch("http://localhost:8080/usuario/login", {
+      const response = await fetch("http://localhost:8080/administrador/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -57,16 +56,16 @@ function Login() {
      
       if(!response.ok){
         setCargando(false)
-        alert("Error. El usuario no existe o ingresaste credenciales incorrectas.")
+        alert("Error. El administrador no existe o ingresaste credenciales incorrectas.")
         return
       }else{
         const data = await response.json()
-        localStorage.setItem("nombreUsuario", data.nombreUsuario) // Guardamos token y nombre de usuario al iniciar sesion
-        localStorage.setItem("idUser", data.idUser)
+        localStorage.setItem("nombreAdministrador", data.nombreAdministrador) 
+        localStorage.setItem("idAdmin", data.idAdmin)
         localStorage.setItem("token", data.token)
-        alert("Bienvenid@ " + data.nombreUsuario)
-        window.dispatchEvent(new Event("storage")) //dispara el evento manualmente
-        navUrl("/") 
+        alert("Bienvenid@ " + data.nombreAdministrador)
+        window.dispatchEvent(new Event("storage")) 
+        navigate("/panel") 
       }
     }catch(e){
       if(e.name === "AbortError"){
@@ -121,13 +120,6 @@ function Login() {
             <button className="boton uppercase w-full py-2 rounded-md text-white bg-[var(--colorBoton)] hover:bg-gray-300 font-medium transition cursor-pointer" type="submit" disabled={cargando}>
               {cargando ? "Ingresando..." : "Ingresar"}
             </button>
-
-            <a
-              href="#"
-              className="olvidar text-sm font-medium text-gray-400 hover:text-[#2C2C2C] hover:underline"
-            >
-              Olvidé mi contraseña
-            </a>
           </form>
         </div>
       </div>
@@ -135,4 +127,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginAdmin;
