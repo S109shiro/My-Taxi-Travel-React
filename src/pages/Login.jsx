@@ -24,6 +24,9 @@ function Login() {
 
   const [cargando, setCargando] = useState(false)
 
+  // Para recordar datos en el navegador
+  const [recordar, setRecordar] = useState(false)
+
   {/* Obtener datos desde el form con name y value, estos se definen en el form */}
   const getDataLogin = (e) =>{
     //console.log(e.target.value);
@@ -117,22 +120,6 @@ function Login() {
               onChange={getDataLogin}
               required
             />
-
-            <div className="flex items-center w-full space-x-2">
-              <input
-                id="recordarDatos"
-                name="recordarDatos"
-                type="checkbox"
-                className="accent-[var(--check)]"
-              />
-              <label
-                htmlFor="recordarDatos"
-                className="text-sm font-semibold text-gray-400 cursor-pointer"
-              >
-                Recordar datos
-              </label>
-            </div>
-
             <button className="boton uppercase w-full py-2 rounded-md text-white bg-[var(--colorBoton)] hover:bg-gray-300 font-medium transition cursor-pointer" type="submit" disabled={cargando}>
               {cargando ? "Ingresando..." : "Ingresar"}
             </button>
