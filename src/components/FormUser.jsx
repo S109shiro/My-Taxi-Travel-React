@@ -72,7 +72,7 @@ function FormUser() {
       sexo: form.sexo,
       documento_identidad: "www.midocumento.com",
       numero_telefono: form.numero_telefono,
-      fecha_nacimiento: form.fecha_nacimiento,
+      fecha_nacimiento: form.fecha_nacimiento + "T12:00:00",   // Solucion al error de actualizar -1 dia
       contrasena: form.contrasena,
     };
 
@@ -147,14 +147,10 @@ function FormUser() {
         <div className="contenedor container px-5 py-24 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
             <h1 className="title-font font-medium text-3xl text-gray-900">
-              Regístrate en My Taxi Travel
+              Actualiza tus datos
             </h1>
             <p className="leading-relaxed mt-4">
-              Únete a nuestra comunidad y empieza a disfrutar de viajes seguros,
-              rápidos y cómodos. El registro es fácil y solo te tomará unos
-              minutos. Completa el formulario con tus datos básicos, confirma tu
-              correo o número de teléfono ¡y listo! En pocos pasos estarás
-              disfrutando de todo lo que My Taxi Travel tiene para ti.
+              Actualiza tus datos de forma rapida y efectiva. Solamente cambia los datos antiguos que quieres actualizar por los nuevos. Eso si, no puedes actualizar tu fecha de nacimiento. De resto, puedes actualizar lo que gustes.
             </p>
           </div>
           <form
