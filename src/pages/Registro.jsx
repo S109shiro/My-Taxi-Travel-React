@@ -105,7 +105,7 @@ function Registro() {
         headers:{
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(form),  // Convierte el objeto a texto json
+        body: JSON.stringify({...form, fecha_nacimiento: form.fecha_nacimiento + "T12:00:00"}),  // Convierte el objeto a texto json, vacimaos el form, lo metemos a otro objeto y le sumamos medio dia a la fecha
         signal: controller.signal  // Indicamos que este fetch hay que cancelar
       })
       clearTimeout(timeout)  // Cancelamos el tiempo para completar el  fetch
