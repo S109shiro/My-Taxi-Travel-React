@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
-import "./panel.css";
+import { useEffect, useState, useRef} from "react";
+import { useNavigate } from "react-router-dom";
+import { Toast } from 'primereact/toast';
+
 // Importar el JS con la logica para cambiar el tema de la pagina
 import cambiarTema from "../components/bCambiarTema";
 import "./panel.css";
+import "../components/toast.css"
 
 function Panel() {
   // Para guardar los usuarios, conductores, taxis
@@ -73,8 +76,31 @@ function Panel() {
 
   }, []);  // [] => Solucion del rendimiento en las requests
 
+  const navigate = useNavigate();
+  function navReset(url){
+    navigate(url, {replace: true}) 
+  }
+
+  const mensajeCerrarSesionAdministrador = useRef(null);
+  function cerrarSesionAdmin(){
+      mensajeCerrarSesionAdministrador.current.show({
+      severity: "success",
+      summary: "Sesión cerrada",
+      detail: "Has cerrado sesión correctamente",
+      life: 2000,
+    });
+
+    setTimeout(() => {
+      localStorage.removeItem("idAdmin");
+      localStorage.removeItem("nombreAdministrador");
+      localStorage.removeItem("token");
+      navReset("/");
+    }, 2000);
+  }
+
   return (
     <>
+      <Toast ref={mensajeCerrarSesionAdministrador} position="center"/>
       <div className="bg-[#FEBC2F] grid grid-cols-4 items-center px-6 py-3">
         <h1 className="col-span-3 text-sm font-bold uppercase tracking-widest">
           Panel de administrador — {nombreAdmin}
@@ -87,7 +113,9 @@ function Panel() {
           >
             Modo Oscuro 🌙
           </button>
-          <button className="flex items-center gap-2 bg-white border border-[#181818] text-[#181818] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#181818] hover:text-white transition-all duration-200 shadow-sm cursor-pointer">
+          <button className="flex items-center gap-2 bg-white border border-[#181818] text-[#181818] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#181818] hover:text-white transition-all duration-200 shadow-sm cursor-pointer" onClick={
+            cerrarSesionAdmin
+          }>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-4 h-4"
