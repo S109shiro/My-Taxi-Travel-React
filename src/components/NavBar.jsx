@@ -19,6 +19,10 @@ function NavBar() {
   function navUrl(url) {
     navigate(url);
   }
+  // Reiniciar el flujo de la navegacion
+  function navReset(url){
+    navigate(url, {replace: true}) 
+  }
 
   //Logueo con token y nombre
   const [nombre, setNombre] = useState(localStorage.getItem("nombreUsuario"));
@@ -38,6 +42,15 @@ function NavBar() {
 
   const [dropdownUsuario, setDropdownUsuario] = useState(false); // Manejamos el dropdown del usuario
   const [dropdownLogin, setDropdownLogin] = useState(false); // Manejamos el dropdown del login del usuario y administrador
+
+  function cerrarSesionUsuario(){
+    localStorage.removeItem("token");
+    localStorage.removeItem("nombreUsuario");
+    localStorage.removeItem("idUser");
+    window.dispatchEvent(new Event("storage"));
+    alert("Haz cerrado sesion. Vuelve pronto");
+    navReset("/login");
+  }
 
   return (
     <>
@@ -174,15 +187,24 @@ function NavBar() {
               </button>
 
               {dropdownUsuario && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10 ">
                   <button
                     onClick={() => {
                       navUrl("/cuenta");
                       setDropdownUsuario(false);
                     }}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg cursor-pointer"
                   >
                     Mi Cuenta
+                  </button>
+                  <button
+                    onClick={() => {
+                      cerrarSesionUsuario()
+                      setDropdownUsuario(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg cursor-pointer"
+                  >
+                    Cerrar Sesion
                   </button>
                 </div>
               )}

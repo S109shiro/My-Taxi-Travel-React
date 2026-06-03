@@ -62,7 +62,7 @@ function Cuenta() {
 
   return (
     <>
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 body-font mb-2">
         <div className="container px-5 py-24 mx-auto flex flex-wrap">
           <div className="encabezado_usuario lg:w-1/2 w-full mb-10 lg:mb-0 rounded-lg overflow-hidden">
             <p className="text-gray-900 text-lg title-font font-medium mb-3">
@@ -170,52 +170,13 @@ function Cuenta() {
                   />
                 </svg>
               </div>
-
               <div className="flex-grow">
                 <h2 className="text-gray-900 text-lg title-font font-medium mb-3">
                   Eliminar la cuenta
                 </h2>
-
                 <p className="leading-relaxed text-base">
                   ¿No estas satisfecho con nosotros? Puedes eliminar tu cuenta
                   si eso deseas
-                </p>
-              </div>
-            </div>
-
-            <div
-              className="carta_usuario flex flex-col mb-10 lg:items-start items-center rounded hover:shadow-lg p-3 rounded-xl hover:bg-purple-200 cursor-pointer transition duration-300 ease-in-out"
-              onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("nombreUsuario");
-                localStorage.removeItem("idUser");
-                window.dispatchEvent(new Event("storage"));
-                alert("Haz cerrado sesion. Vuelve pronto");
-                navReset("/login");
-              }}
-            >
-              <div className="w-12 h-12 inline-flex items-center justify-center rounded-full bg-purple-200 text-indigo-500 mb-5">
-                <svg
-                  fill="none"
-                  stroke="black"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="w-6 h-6"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </div>
-
-              <div className="texto flex-grow">
-                <h2 className="text-gray-900 text-lg title-font font-medium mb-3">
-                  Cerrar Sesion
-                </h2>
-
-                <p className="leading-relaxed text-base">
-                  Cierras sesion en este dispositivo.
                 </p>
               </div>
             </div>

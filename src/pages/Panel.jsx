@@ -81,8 +81,10 @@ function Panel() {
     navigate(url, {replace: true}) 
   }
 
-  const mensajeCerrarSesionAdministrador = useRef(null);
-  function cerrarSesionAdmin(){
+  const mensajeCerrarSesionAdministrador = useRef(null);  // Instanciamos useRef para el mensaje de logout
+  
+  // Funcion para mostrar mensaje y cerrar sesion
+  function cerrarSesionAdmin(){     
       mensajeCerrarSesionAdministrador.current.show({
       severity: "success",
       summary: "Sesión cerrada",
@@ -98,6 +100,7 @@ function Panel() {
     }, 2000);
   }
 
+  // Se pone el componente del toast referenciando el useRef con la posicion que quiera
   return (
     <>
       <Toast ref={mensajeCerrarSesionAdministrador} position="center"/>
