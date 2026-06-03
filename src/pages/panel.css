@@ -1,2 +1,22 @@
 @import "tailwindcss";
 
+body{
+    background-color: var(--bgb);
+}
+
+#boton-tema{
+    margin-left: 0.5rem;
+}
+
+:root{
+    --bg: #FEBC2F;
+    --bgb: white;
+    --colorText: #181818;
+    
+}
+
+.tema-oscuro{
+    --bg: #C99A1C;
+    --bgb: #181818;
+    --colorText: white;
+}
