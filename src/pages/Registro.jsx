@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Toast } from 'primereact/toast';
 import "./registro.css";
+
 
 
 function Registro() {
@@ -36,7 +38,14 @@ function Registro() {
   useEffect(()=>{
     document.title = "My Taxi Travel - Registro";
     
-  })
+  }, [])
+
+  // Mensajes de errores
+  const mensajeContrasenasDistintas = useRef(null)
+  const mensajeErrorServidor = useRef(null)
+  const mensajeContrasena = useRef(null)
+  const mensajeCoincidenciaDatos = useRef(null)
+  const mensajeRegistroExitoso = useRef(null)  //aqui vamos
 
 
   {/*Creacion de usuario*/}
@@ -76,14 +85,24 @@ function Registro() {
     e.preventDefault(); // Evita que se recargue la pagina al darle Submit
 
     if(form.contrasena != confirmarContrasena){
-      alert("Las contrasenas son distintas");
+      mensajeContrasenasDistintas.current.show({
+        severity: "warn",
+        summary: "Error en el formulario",
+        detail: "Las contrasenas son distintas",
+        life: 2000,
+      })
       return // En caso de entrar detiene la ejecucion y no sigue hasta q sea falsa la condicion
     }
     
     // Validar contrasena
     const error = validarContrasena(form.contrasena)
     if(error){
-      alert(error)
+      mensajeContrasena.current.show({
+        severity: "warn",
+        summary: "Error en el formulario",
+        detail: `${error}`,
+        life: 2000
+      })
       return
     }
 
@@ -113,29 +132,57 @@ function Registro() {
       if(!response.ok){
         const data = await response.text();
         if(data.includes("UKl9rsavvdyd3hrpyttoh1mh744")){
-          alert("Error. El numero de identidad ingresado ya esta en uso")
+          mensajeCoincidenciaDatos.current.show({
+            severity: "warn",
+            summary: "Número de identidad duplicado",
+            detail: "El número de identidad que ingresaste ya está asociado a otra cuenta",
+            life: 2000
+          })
         }else if (data.includes("UKspmnyb4dsul95fjmr5kmdmvub")){
-          alert("Error. El correo electronico ingresado ya esta en uso")
+          mensajeCoincidenciaDatos.current.show({
+            severity: "warn",
+            summary: "Correo electrónico duplicado",
+            detail: "El correo electrónico ingresado ya se encuentra registrado",
+            life: 2000
+          })
         }
         setCargando(false)
         return
       }
       const data = await response.text()
       setCargando(false)
-      alert(data + " - Ahora ya puedes iniciar sesion")
-      navUrl("/login")
-
-
+      mensajeRegistroExitoso.current.show({
+        severity: "success",
+        summary: "Usuario Registrado",
+        detail: `${data} - Ahora ya puedes iniciar sesion`,
+        life: 2000
+      })
+      setTimeout(()=>{
+        navUrl("/login")
+      }, 2000)
+      
     }catch(e){
       if(e.name === "AbortError"){   // Este error lo lanza controller.abort() en caso que pasen 5 segundos
-        alert("El servidor tardo demasiado en responder, intentalo mas tarde")
-        setCargando(false)
+        mensajeErrorServidor.current.show({
+          severity: "error",
+          summary: "Error en el servidor",
+          detail: "El servidor tardo demasiado en responder, intentalo mas tarde",
+          life: 2000
+        })
+        setTimeout(()=>{
+          setCargando(false)
+        }, 2000)
       }
     }
   }
 
   return (
     <>
+      <Toast ref={mensajeContrasenasDistintas} pt={{ root: {className: "toastContrasenasDistintas"}}}/>
+      <Toast ref={mensajeErrorServidor} pt={{root: {className: "toastErrorServidor"}}}/>
+      <Toast ref={mensajeContrasena} pt={{root: {className: "toastMensajeContrasena"}}} />
+      <Toast ref={mensajeCoincidenciaDatos} pt={{root: {className: "toastmensajeCoincidenciaDatos"}}} />
+      <Toast ref={mensajeRegistroExitoso} pt={{root: {className: "toastMensajeRegistroExitoso"}}} />
       <section className="text-gray-600 body-font">
         <div className="contenedor container px-5 py-24 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">

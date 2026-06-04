@@ -5,7 +5,7 @@ import { Toast } from 'primereact/toast';
 // Importar el JS con la logica para cambiar el tema de la pagina
 import cambiarTema from "../components/bCambiarTema";
 import "./panel.css";
-import "../components/toast.css"
+//import "../components/toast.css"
 
 function Panel() {
   // Para guardar los usuarios, conductores, taxis

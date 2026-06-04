@@ -37,3 +37,23 @@
     --colorTexto: #E5E7EB;
     --tarjetaColor: #242424;
 }
+
+.toastContrasenasDistintas .p-toast-summary, .toastContrasenasDistintas .p-toast-detail{
+    color: black;
+}
+
+.toastErrorServidor .p-toast-summary, .toastErrorServidor .p-toast-detail{
+  color: black;
+}
+
+.toastMensajeContrasena .p-toast-summary, .toastMensajeContrasena .p-toast-detail{
+  color: black;
+}
+
+.toastmensajeCoincidenciaDatos .p-toast-summary, .toastmensajeCoincidenciaDatos .p-toast-detail{
+    color: black;
+}
+
+.toastMensajeRegistroExitoso .p-toast-summary, .toastMensajeRegistroExitoso .p-toast-detail{
+    color: black;
+}
