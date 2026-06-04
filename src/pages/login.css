@@ -44,3 +44,18 @@
     --colorBoton:white;
     --colorBTexto:#2C2C2C;
 }
+
+/* A esta elemento, le cambiamos esto dentro del toast*/
+.toastErrorLogin .p-toast-summary, .toastErrorLogin .p-toast-detail{
+    color: black;
+    
+}
+
+.toastExitosoLogin .p-toast-summary, .toastExitosoLogin .p-toast-detail{
+    color: black;
+}
+
+.toastErrorServidor .p-toast-summary, .toastErrorServidor .p-toast-detail{
+    color: black;
+}
+

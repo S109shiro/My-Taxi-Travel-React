@@ -20,3 +20,7 @@ body{
     --bgb: #181818;
     --colorText: white;
 }
+
+.mensajeCerrarSesionAdmin .p-toast-summary, .mensajeCerrarSesionAdmin .p-toast-detail{
+    color: black;
+}

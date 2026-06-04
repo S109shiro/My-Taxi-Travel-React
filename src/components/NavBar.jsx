@@ -9,7 +9,8 @@ import cambiarTema from "./bCambiarTema";
 
 // importacion para los enlaces del nav
 import { NavLink, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import {Toast} from "primereact/toast";
 
 // Props: Obtiene el usuario y verifica si esta logueado
 function NavBar() {
@@ -19,6 +20,10 @@ function NavBar() {
   function navUrl(url) {
     navigate(url);
   }
+
+  // Mensaje para el toast
+  const mensajeCerrarSesionUsuario = useRef(null)
+
   // Reiniciar el flujo de la navegacion
   function navReset(url){
     navigate(url, {replace: true}) 
@@ -47,13 +52,21 @@ function NavBar() {
     localStorage.removeItem("token");
     localStorage.removeItem("nombreUsuario");
     localStorage.removeItem("idUser");
-    window.dispatchEvent(new Event("storage"));
-    alert("Haz cerrado sesion. Vuelve pronto");
-    navReset("/login");
+    mensajeCerrarSesionUsuario.current.show({
+      severity: "success",
+      summary: "Sesión cerrada",
+      detail: "Has cerrado sesión correctamente",
+      life: 2000,
+    })
+    setTimeout(()=>{
+      window.dispatchEvent(new Event("storage"));
+      navReset("/login");
+    }, 2000)
   }
 
   return (
     <>
+    <Toast ref={mensajeCerrarSesionUsuario}/>
       <header className="text-gray-600 body-font bg-[var(--bg)]">
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a

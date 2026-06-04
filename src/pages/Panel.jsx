@@ -103,7 +103,9 @@ function Panel() {
   // Se pone el componente del toast referenciando el useRef con la posicion que quiera
   return (
     <>
-      <Toast ref={mensajeCerrarSesionAdministrador} position="center"/>
+      <Toast ref={mensajeCerrarSesionAdministrador} position="center" pt={{
+        root: {className: "mensajeCerrarSesionAdmin"}
+      }}/>
       <div className="bg-[#FEBC2F] grid grid-cols-4 items-center px-6 py-3">
         <h1 className="col-span-3 text-sm font-bold uppercase tracking-widest">
           Panel de administrador — {nombreAdmin}
