@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Toast } from "primereact/toast"
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import imgUser from "../assets/imgUserAccount/user_usuario.jpg";
 import "./cuenta.css";
 
@@ -25,12 +27,24 @@ function Cuenta() {
     navigate(url, {replace: true}) 
   }
 
+  //Mensaje toast
+  const mensajeEliminacionUsuario = useRef(null)
+  const mensajeCancelarEliminacion = useRef(null)
+  const mensajeErrorServidor = useRef(null)
 
-  // Confirmacion eliminacion cuenta
+  // Confirmacion eliminacion cuenta (vamos aqui)
   const eliminarCuenta = async () => {
-    const eliminar = window.confirm("Quieres eliminar tu cuenta");
-    if (eliminar) {
-      try {
+    confirmDialog({
+      message: "¿Seguro que quieres eliminar tu cuenta?",
+      header: "Eliminar cuenta",
+      icon: 'pi pi-times-circle',
+      defaultFocus: "reject",
+      acceptLabel: "Aceptar",
+      acceptClassName: "p-button-danger",  
+      rejectLabel: "Cancelar",
+      accept: async () =>{
+        console.log("Aceptao")
+        try {
         const response = await fetch(
           `http://localhost:8080/usuario/delete/${idUsuario}`,
           {
@@ -41,28 +55,48 @@ function Cuenta() {
           },
         )
         if(response.ok) {
-          alert("Se ha eliminado la cuenta correctamente");
           localStorage.removeItem("idUser");
           localStorage.removeItem("nombreUsuario");
           localStorage.removeItem("token");
-          window.dispatchEvent(new Event("storage"));
-          navReset("/");
+          mensajeEliminacionUsuario.current.show({
+            severity: "success",
+            summary: "Cuenta Eliminada",
+            detail: "Se ha eliminado la cuenta correctamente. Volveras a la pagina de inicio",
+            life: 2000,
+          })
+          setTimeout(()=>{
+            window.dispatchEvent(new Event("storage"));
+            navReset("/");
+          }, 2000)
+          
         }
       } catch (error) {
-        alert("Ha ocurrido un error en el servidor. Vuelva a intentarlo")
-        console.log(error)
+        mensajeErrorServidor.current.show({
+          severity: "error",
+          summary: "Error en eliminar la cuenta",
+          detail: "Ha ocurrido un error en el servidor. Vuelva a intentarlo",
+          life: 2000,
+        })
       }
-      
-    } else {
-      alert("Se ha cancelado la eliminacion de la cuenta");
-    }
-  };
-
-  
+      },
+      reject: () =>{
+        mensajeCancelarEliminacion.current.show({
+          severity: "info",
+          summary: "Proceso Cancelado",
+          detail: "Se ha cancelado la eliminacion de la cuenta",
+          life: 2000,
+        })
+      }
+    })
+  }
 
   return (
     <>
-      <section className="text-gray-600 body-font mb-2">
+      <ConfirmDialog pt={{icon: {className: "iconoEliminar"}}}/> {/* Para la confirmacion de eliminacion de cuenta, como el toast*/}
+      <Toast ref={mensajeCancelarEliminacion} pt={{root: {className: "toastMensajeCancelar"}}}/>
+      <Toast ref={mensajeErrorServidor} pt={{root: {className: "toastMensajeErrorServidor"}}}/>
+      <Toast ref={mensajeEliminacionUsuario} pt={{root: {className: "toastMensajeEliminacion"}}}/>
+      <section className="text-gray-600 body-font mb-3">
         <div className="container px-5 py-24 mx-auto flex flex-wrap">
           <div className="encabezado_usuario lg:w-1/2 w-full mb-10 lg:mb-0 rounded-lg overflow-hidden">
             <p className="text-gray-900 text-lg title-font font-medium mb-3">
@@ -186,5 +220,4 @@ function Cuenta() {
     </>
   );
 }
-
 export default Cuenta;

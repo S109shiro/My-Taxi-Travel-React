@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.toastMensajeCerrarSesion .p-toast-summary, .toastMensajeCerrarSesion .p-toast-detail{
+    color: black;
+}

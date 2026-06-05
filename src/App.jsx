@@ -15,8 +15,10 @@ import Cuenta from "./pages/Cuenta";
 import FormularioUsuario from "./components/FormUser";
 import ViajesUsuario from "./pages/viajesUsuario";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
+// Recursos para PrimeReact junto con sus iconos
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 // Obtenemos la etiqueta a utilizar
 const element = document.getElementById("root");

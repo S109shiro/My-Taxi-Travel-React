@@ -26,3 +26,20 @@
     --colorTitulo: black;
     --colorTexto: #111827;
 }
+
+.iconoEliminar {
+  color: red !important;
+  font-size: 2rem !important;
+}
+
+.toastMensajeCancelar .p-toast-summary, .toastMensajeCancelar .p-toast-detail{
+    color: black;
+}
+
+.toastMensajeErrorServidor .p-toast-summary, .toastMensajeErrorServidor .p-toast-detail{
+    color: black;
+}
+
+.toastMensajeEliminacion .p-toast-summary, .toastMensajeEliminacion .p-toast-detail{
+    color: black;
+}

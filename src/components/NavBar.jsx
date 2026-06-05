@@ -66,7 +66,7 @@ function NavBar() {
 
   return (
     <>
-    <Toast ref={mensajeCerrarSesionUsuario}/>
+    <Toast ref={mensajeCerrarSesionUsuario} pt={{root: {className: "toastMensajeCerrarSesion"}}}/>
       <header className="text-gray-600 body-font bg-[var(--bg)]">
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a
