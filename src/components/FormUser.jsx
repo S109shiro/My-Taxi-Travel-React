@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import "./formUser.css"
 
 function FormUser() {
   // Obtener id del usuario
@@ -8,6 +10,12 @@ function FormUser() {
   const navigate = useNavigate();
   const navUrl = (url) => navigate(url);
   const navReset = (url) => navigate(url, {replace: true})
+
+  // Mensajes de errores
+  const mensajeContrasenasDistintas = useRef(null)
+  const mensajeErrorServidor = useRef(null)
+  const mensajeContrasena = useRef(null)
+  const mensajeActualizacionExitosa = useRef(null) 
 
   const validarContrasena = (contrasena) => {
     if (contrasena.length < 4) {
@@ -45,14 +53,24 @@ function FormUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.contrasena !== confirmarContrasena) {
-      alert("Las contraseñas no coinciden");
+      mensajeContrasenasDistintas.current.show({
+        severity: "warn",
+        summary: "Error en el formulario",
+        detail: "Las contrasenas son distintas",
+        life: 2000,
+      })
       return;
     }
 
     // Validar contrasena
     const error = validarContrasena(form.contrasena);
     if (error) {
-      alert(error);
+      mensajeContrasena.current.show({
+        severity: "warn",
+        summary: "Error en el formulario",
+        detail: `${error}`,
+        life: 2000
+      })
       return;
     }
 
@@ -86,15 +104,27 @@ function FormUser() {
         body: JSON.stringify(bodyRequestUpdate),
       });
 
-      if (response.ok) {
+      if(response.ok) {
         localStorage.setItem("nombreUsuario", form.nombre);
-        window.dispatchEvent(new Event("storage"));
-        alert("Datos actualizados");
-        setCargando(false);
-        navReset("/");
+        mensajeActualizacionExitosa.current.show({
+          severity: "success",
+          summary: "Usuario Actualizado",
+          detail: "La actualizacion de datos fue exitosa",
+          life: 2000
+        })
+        setTimeout(()=>{
+          window.dispatchEvent(new Event("storage"));
+          setCargando(false);
+          navReset("/");
+        }, 2000)        
       }
     } catch (error) {
-      alert(error);
+      mensajeErrorServidor.current.show({
+        severity: "error",
+          summary: "Error en el servidor",
+          detail: "El servidor tardo demasiado en responder, intentalo mas tarde",
+          life: 2000
+      })
       setCargando(false);
     }
   };
@@ -143,6 +173,10 @@ function FormUser() {
 
   return (
     <>
+    <Toast ref={mensajeContrasenasDistintas} pt={{root: {className: "toastMensajeActualizacion"}}}/>
+    <Toast ref={mensajeContrasena} pt={{root: {className: "toastMensajeActualizacion"}}}/>
+    <Toast ref={mensajeErrorServidor} pt={{root: {className: "toastMensajeActualizacion"}}}/>
+    <Toast ref={mensajeActualizacionExitosa} pt={{root: {className: "toastMensajeActualizacion"}}}/>
       <section className="text-gray-600 body-font">
         <div className="contenedor container px-5 py-24 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">

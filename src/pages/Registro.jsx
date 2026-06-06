@@ -45,7 +45,7 @@ function Registro() {
   const mensajeErrorServidor = useRef(null)
   const mensajeContrasena = useRef(null)
   const mensajeCoincidenciaDatos = useRef(null)
-  const mensajeRegistroExitoso = useRef(null)  //aqui vamos
+  const mensajeRegistroExitoso = useRef(null) 
 
 
   {/*Creacion de usuario*/}
