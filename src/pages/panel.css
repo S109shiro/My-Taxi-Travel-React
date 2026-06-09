@@ -24,3 +24,20 @@ body{
 .mensajeCerrarSesionAdmin .p-toast-summary, .mensajeCerrarSesionAdmin .p-toast-detail{
     color: black;
 }
+
+.toastMensajeCancelar .p-toast-summary, .toastMensajeCancelar .p-toast-detail{
+    color: black;
+}
+
+.toastMensajeErrorServidor .p-toast-summary, .toastMensajeErrorServidor .p-toast-detail{
+    color: black;
+}
+
+.toastMensajeEliminacion .p-toast-summary, .toastMensajeEliminacion .p-toast-detail{
+    color: black;
+}
+
+.iconoEliminar {
+  color: red !important;
+  font-size: 2rem !important;
+}

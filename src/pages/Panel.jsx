@@ -1,97 +1,283 @@
-import { useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Toast } from 'primereact/toast';
+import { Toast } from "primereact/toast";
+import { Dialog } from "primereact/dialog";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
-// Importar el JS con la logica para cambiar el tema de la pagina
 import cambiarTema from "../components/bCambiarTema";
 import "./panel.css";
-//import "../components/toast.css"
+
+
+// Validacion de contraseña (igual que en el otro componente)
+const validarContrasena = (contrasena) => {
+  if (contrasena.length < 4)
+    return "La contraseña debe tener al menos 4 caracteres";
+  if (!/[A-Z]/.test(contrasena))
+    return "La contraseña debe tener al menos una mayúscula";
+  if (!/[0-9]/.test(contrasena))
+    return "La contraseña debe tener al menos un número";
+  return null;
+};
 
 function Panel() {
-  // Para guardar los usuarios, conductores, taxis
   const [usuarios, setUsuarios] = useState([]);
   const [conductores, setConductores] = useState([]);
-  const [taxis, setTaxis] = useState([])
+  const [taxis, setTaxis] = useState([]);
+
+  // Modals
+  const [modalAbiertoUsuario, setModalAbiertoUsuario] = useState(false);
+  const [modalAbiertoCrearTaxi, setModalAbiertoCrearTaxi] = useState(false);
+
+  // Data Usuarios
+  const [usuarioIdEditar, setUsuarioIdEditar] = useState(null);
+
+  const [confirmarContrasena, setConfirmarContrasena] = useState("");
+  const [cargando, setCargando] = useState(false);
+
+  const [formUser, setFormUser] = useState({
+    nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    edad: 0,
+    numero_identificacion: 0,
+    email: "",
+    sexo: "",
+    numero_telefono: "",
+    fecha_nacimiento: "",
+    contrasena: "",
+  });
+
+  // Toasts
+  const mensajeCerrarSesionAdministrador = useRef(null);
+  const mensajeContrasenasDistintas = useRef(null);
+  const mensajeContrasena = useRef(null);
+  const mensajeActualizacionExitosa = useRef(null);
+  const mensajeErrorServidor = useRef(null);
+  const mensajeEliminacion = useRef(null);
 
   const nombreAdmin = localStorage.getItem("nombreAdministrador");
+  const navigate = useNavigate();
+
+  function navReset(url) {
+    navigate(url, { replace: true });
+  }
+
+  // Cargar datos iniciales
   useEffect(() => {
     document.title = "Panel de Administracion";
 
-    // Realizamos un fetch para obtener todo los usuarios de la bd y los guardamos en un set
     const cargarUsuarios = async () => {
       try {
-        const response = await fetch("http://localhost:8080/usuario/getAll", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+        const res = await fetch("http://localhost:8080/usuario/getAll", {
+          headers: { "Content-Type": "application/json" },
         });
-        const dataUsuarios = await response.json();
-        setUsuarios(dataUsuarios);
-      } catch (error) {
-        console.error("Error en cargar los usuarios: " + error);
+        setUsuarios(await res.json());
+      } catch (e) {
+        console.error("Error cargando usuarios:", e);
       }
     };
 
-    // Obtener conductores con un fetch
     const cargarConductores = async () => {
-      try{
-        const response = await fetch("http://localhost:8080/conductor/getAll", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        const dataConductores = await response.json()
-        setConductores(dataConductores)
-        //console.log(dataConductores)
-      }catch(error){
-        console.error("Error en cargar los conductores: " + error)
+      try {
+        const res = await fetch("http://localhost:8080/conductor/getAll", {
+          headers: { "Content-Type": "application/json" },
+        });
+        setConductores(await res.json());
+      } catch (e) {
+        console.error("Error cargando conductores:", e);
       }
-    }
+    };
 
-    // Obtener Taxis 
     const cargarTaxis = async () => {
-      try{
-        const response = await fetch("http://localhost:8080/taxi/getAll", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        const dataTaxis = await response.json()
-        setTaxis(dataTaxis)
-        //console.log("Taxis cargados: " + taxis)
-      }catch(error){
-        console.error("Error en cargar los taxis: " + error)
+      try {
+        const res = await fetch("http://localhost:8080/taxi/getAll", {
+          headers: { "Content-Type": "application/json" },
+        });
+        setTaxis(await res.json());
+      } catch (e) {
+        console.error("Error cargando taxis:", e);
       }
-    }
+    };
 
-
-    // Ejecutamos funciones asincronas
     cargarUsuarios();
     cargarConductores();
     cargarTaxis();
+  }, []);
 
+  // Cargar datos del usuario al abrir el modal
+  useEffect(() => {
+    if (!usuarioIdEditar) return;
 
-  }, []);  // [] => Solucion del rendimiento en las requests
+    const obtenerUsuario = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/usuario/get/${usuarioIdEditar}`,
+          {
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+        const data = await res.json();
+        setFormUser({
+          nombre: data.nombre,
+          primer_apellido: data.primer_apellido,
+          segundo_apellido: data.segundo_apellido,
+          edad: data.edad,
+          numero_identificacion: data.numero_identificacion,
+          email: data.email,
+          sexo: data.sexo,
+          numero_telefono: data.numero_telefono,
+          fecha_nacimiento: data.fecha_nacimiento,
+          contrasena: "",
+        });
+        setConfirmarContrasena("");
+      } catch (e) {
+        console.error("Error al obtener usuario a editar:", e);
+      }
+    };
 
-  const navigate = useNavigate();
-  function navReset(url){
-    navigate(url, {replace: true}) 
-  }
+    obtenerUsuario();
+  }, [usuarioIdEditar]);
 
-  const mensajeCerrarSesionAdministrador = useRef(null);  // Instanciamos useRef para el mensaje de logout
-  
-  // Funcion para mostrar mensaje y cerrar sesion
-  function cerrarSesionAdmin(){     
-      mensajeCerrarSesionAdministrador.current.show({
+  // PUT para actualizar usuario — con validaciones
+  const actualizarUsuario = async () => {
+    // Validar que las contraseñas coincidan
+    if (formUser.contrasena !== confirmarContrasena) {
+      mensajeContrasenasDistintas.current.show({
+        severity: "warn",
+        summary: "Error en el formulario",
+        detail: "Las contraseñas son distintas",
+        life: 2000,
+      });
+      return;
+    }
+
+    // Validar formato de contraseña
+    const error = validarContrasena(formUser.contrasena);
+    if (error) {
+      mensajeContrasena.current.show({
+        severity: "warn",
+        summary: "Error en el formulario",
+        detail: error,
+        life: 2000,
+      });
+      return;
+    }
+
+    setCargando(true);
+
+    const bodyRequestUpdate = {
+      id_usuario: usuarioIdEditar,
+      nombre: formUser.nombre,
+      primer_apellido: formUser.primer_apellido,
+      segundo_apellido: formUser.segundo_apellido,
+      edad: formUser.edad,
+      numero_identificacion: formUser.numero_identificacion,
+      email: formUser.email,
+      sexo: formUser.sexo,
+      documento_identidad: "www.midocumento.com",
+      numero_telefono: formUser.numero_telefono,
+      fecha_nacimiento: formUser.fecha_nacimiento.split("T")[0] + "T12:00:00", // Evita bug -1 dia
+      contrasena: formUser.contrasena,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/usuario/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyRequestUpdate),
+      });
+
+      if (response.ok) {
+        mensajeActualizacionExitosa.current.show({
+          severity: "success",
+          summary: "Usuario Actualizado",
+          detail: "La actualización de datos fue exitosa",
+          life: 2000,
+        });
+        // Refrescar lista
+        const data = await fetch("http://localhost:8080/usuario/getAll").then(
+          (r) => r.json(),
+        );
+        setUsuarios(data);
+        setTimeout(() => {
+          setModalAbiertoUsuario(false);
+          setUsuarioIdEditar(null);
+          setCargando(false);
+        }, 2000);
+      }
+    } catch (e) {
+      mensajeErrorServidor.current.show({
+        severity: "error",
+        summary: "Error en el servidor",
+        detail: "El servidor tardó demasiado en responder, inténtalo más tarde",
+        life: 2000,
+      });
+      setCargando(false);
+    }
+  };
+
+  // DELETE para eliminar un usuario
+  const eliminarUsuario = async (idUsuario) => {
+    confirmDialog({
+      message: "¿Seguro que quieres eliminar tu cuenta?",
+      header: "Eliminar cuenta",
+      icon: 'pi pi-times-circle',
+      defaultFocus: "reject",
+      acceptLabel: "Aceptar",
+      acceptClassName: "p-button-danger",  
+      rejectLabel: "Cancelar",
+      accept: async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/usuario/delete/${idUsuario}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          if (response.ok) {
+            // Quitar el usuario de la lista sin hacer otro fetch
+            setUsuarios((prev) =>
+              prev.filter((u) => u.id_usuario !== idUsuario),
+            );
+            mensajeEliminacion.current.show({
+              severity: "success",
+              summary: "Cuenta Eliminada",
+              detail: "Se ha eliminado la cuenta correctamente",
+              life: 2000,
+            });
+          }
+        } catch (error) {
+          mensajeErrorServidor.current.show({
+            severity: "error",
+            summary: "Error en el servidor",
+            detail:
+              "El servidor tardó demasiado en responder, inténtalo más tarde",
+            life: 2000,
+          });
+        }
+      
+      },
+      reject: () =>{
+        mensajeEliminacion.current.show({
+          severity: "info",
+          summary: "Proceso Cancelado",
+          detail: "Se ha cancelado la eliminacion de la cuenta",
+          life: 2000,
+        })
+      }
+    });
+  };
+
+  function cerrarSesionAdmin() {
+    mensajeCerrarSesionAdministrador.current.show({
       severity: "success",
       summary: "Sesión cerrada",
       detail: "Has cerrado sesión correctamente",
       life: 2000,
     });
-
     setTimeout(() => {
       localStorage.removeItem("idAdmin");
       localStorage.removeItem("nombreAdministrador");
@@ -100,12 +286,40 @@ function Panel() {
     }, 2000);
   }
 
-  // Se pone el componente del toast referenciando el useRef con la posicion que quiera
+  // Abrir Modal a la hora de actualizar usuario
+  const abrirModalUsuario = (usuario) => {
+    setUsuarioIdEditar(usuario.id_usuario);
+    setModalAbiertoUsuario(true);
+  };
+
+  // Abrir modal a la hora de crear taxi
+  const abrirModalCrearTaxi = () => {
+    setModalAbiertoCrearTaxi(true);
+  };
+
+  const handleFormUser = (campo, valor) => {
+    setFormUser((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const inputClass =
+    "w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out";
+
   return (
     <>
-      <Toast ref={mensajeCerrarSesionAdministrador} position="center" pt={{
-        root: {className: "mensajeCerrarSesionAdmin"}
-      }}/>
+      {/* Toasts */}
+      <Toast
+        ref={mensajeCerrarSesionAdministrador}
+        position="center"
+        pt={{ root: { className: "mensajeCerrarSesionAdmin" } }}
+      />
+      <Toast ref={mensajeContrasenasDistintas} position="center" />
+      <Toast ref={mensajeContrasena} position="center" />
+      <Toast ref={mensajeActualizacionExitosa} position="center" />
+      <Toast ref={mensajeErrorServidor} pt={{root: {className: "toastMensajeErrorServidor"}}}/>
+      <Toast ref={mensajeEliminacion} pt={{root: {className: "toastMensajeEliminacion"}}}/>
+      <ConfirmDialog pt={{icon: {className: "iconoEliminar"}}}/>
+
+      {/* Navbar */}
       <div className="bg-[#FEBC2F] grid grid-cols-4 items-center px-6 py-3">
         <h1 className="col-span-3 text-sm font-bold uppercase tracking-widest">
           Panel de administrador — {nombreAdmin}
@@ -114,13 +328,14 @@ function Panel() {
           <button
             onClick={cambiarTema}
             id="boton-tema"
-            className="inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black rounded text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white mr-3"
+            className="inline-flex items-center border-1 border-black bg-[#2C2C2C] rounded-lg py-1 px-3 focus:outline-none hover:bg-gray-200 hover:text-black text-base mt-4 md:mt-0 cursor-pointer transition delay-100 ease-in-out text-white mr-3"
           >
             Modo Oscuro 🌙
           </button>
-          <button className="flex items-center gap-2 bg-white border border-[#181818] text-[#181818] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#181818] hover:text-white transition-all duration-200 shadow-sm cursor-pointer" onClick={
-            cerrarSesionAdmin
-          }>
+          <button
+            className="flex items-center gap-2 bg-white border border-[#181818] text-[#181818] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#181818] hover:text-white transition-all duration-200 shadow-sm cursor-pointer"
+            onClick={cerrarSesionAdmin}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-4 h-4"
@@ -140,35 +355,24 @@ function Panel() {
         </div>
       </div>
 
+      {/* Tabla Usuarios */}
       <div className="tb_usuarios m-5 mb-10 text-[var(--colorText)]">
         <h2 className="text-center uppercase text-lg mb-2 font-bold">
           Usuarios registrados en la plataforma
         </h2>
-        <div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
-          <table class="w-full text-sm text-left rtl:text-right text-body ">
-            <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium ">
+        <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+          <table className="w-full text-sm text-left rtl:text-right text-body">
+            <thead className="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
               <tr>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  ID
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Nombre 
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Apellidos
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Email
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
+                <th className="px-6 py-3 font-medium">ID</th>
+                <th className="px-6 py-3 font-medium">Nombre</th>
+                <th className="px-6 py-3 font-medium">Apellidos</th>
+                <th className="px-6 py-3 font-medium">Email</th>
+                <th className="px-6 py-3 font-medium">
                   Numero de identificacion
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Numero de celular
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Acciones
-                </th>
+                <th className="px-6 py-3 font-medium">Numero de celular</th>
+                <th className="px-6 py-3 font-medium">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -177,10 +381,7 @@ function Panel() {
                   key={usuario.id_usuario}
                   className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium"
                 >
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-heading whitespace-nowrap"
-                  >
+                  <td className="px-6 py-4 font-medium text-heading whitespace-nowrap">
                     {usuario.id_usuario}
                   </td>
                   <td className="px-6 py-4">{usuario.nombre}</td>
@@ -190,11 +391,19 @@ function Panel() {
                   <td className="px-6 py-4">{usuario.email}</td>
                   <td className="px-6 py-4">{usuario.numero_identificacion}</td>
                   <td className="px-6 py-4">{usuario.numero_telefono}</td>
-                  <td>
-                    <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mr-3">
+                  <td className="px-6 py-4">
+                    <button
+                      className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mr-3"
+                      onClick={() => abrirModalUsuario(usuario)}
+                    >
                       Editar
                     </button>
-                    <button className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded cursor-pointer">
+                    <button
+                      className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded cursor-pointer"
+                      onClick={() => {
+                        eliminarUsuario(usuario.id_usuario);
+                      }}
+                    >
                       Eliminar
                     </button>
                   </td>
@@ -205,39 +414,28 @@ function Panel() {
         </div>
       </div>
 
+      {/* Tabla Conductores */}
       <div className="tb_conductores m-5 mb-10 text-[var(--colorText)]">
         <h2 className="text-center uppercase text-lg mb-2 font-bold">
           Conductores registrados en la plataforma
         </h2>
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-3">Crear Conductor</button>
-        <div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
-          <table class="w-full text-sm text-left rtl:text-right text-body">
-            <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
+        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-3">
+          Crear Conductor
+        </button>
+        <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+          <table className="w-full text-sm text-left rtl:text-right text-body">
+            <thead className="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
               <tr>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  ID
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Nombre 
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Apellidos
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Email
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
+                <th className="px-6 py-3 font-medium">ID</th>
+                <th className="px-6 py-3 font-medium">Nombre</th>
+                <th className="px-6 py-3 font-medium">Apellidos</th>
+                <th className="px-6 py-3 font-medium">Email</th>
+                <th className="px-6 py-3 font-medium">
                   Numero de identificacion
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Numero de celular
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  ID Taxi Utilizado
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Acciones
-                </th>
+                <th className="px-6 py-3 font-medium">Numero de celular</th>
+                <th className="px-6 py-3 font-medium">ID Taxi Utilizado</th>
+                <th className="px-6 py-3 font-medium">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -246,10 +444,7 @@ function Panel() {
                   key={conductor.id_conductor}
                   className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium"
                 >
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-heading whitespace-nowrap"
-                  >
+                  <td className="px-6 py-4 font-medium text-heading whitespace-nowrap">
                     {conductor.id_conductor}
                   </td>
                   <td className="px-6 py-4">{conductor.nombre}</td>
@@ -257,10 +452,12 @@ function Panel() {
                     {conductor.primer_apellido} {conductor.segundo_apellido}
                   </td>
                   <td className="px-6 py-4">{conductor.email}</td>
-                  <td className="px-6 py-4">{conductor.numero_identificacion}</td>
+                  <td className="px-6 py-4">
+                    {conductor.numero_identificacion}
+                  </td>
                   <td className="px-6 py-4">{conductor.numero_telefono}</td>
                   <td className="px-6 py-4">{conductor.taxi_en_uso.id_taxi}</td>
-                  <td>
+                  <td className="px-6 py-4">
                     <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mr-3">
                       Editar
                     </button>
@@ -275,30 +472,23 @@ function Panel() {
         </div>
       </div>
 
+      {/* Tabla Taxis */}
       <div className="tb_taxis m-5 text-[var(--colorText)]">
         <h2 className="text-center uppercase text-lg mb-2 font-bold">
           Taxis registrados en la plataforma
         </h2>
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-3">Crear Taxi</button>
-        <div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
-          <table class="w-full text-sm text-left rtl:text-right text-body">
-            <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
+        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-3" onClick={abrirModalCrearTaxi}>
+          Crear Taxi
+        </button>
+        <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+          <table className="w-full text-sm text-left rtl:text-right text-body">
+            <thead className="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
               <tr>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  ID
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Placa
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Modelo
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Ult. Tecnicomecanica
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                  Acciones
-                </th>
+                <th className="px-6 py-3 font-medium">ID</th>
+                <th className="px-6 py-3 font-medium">Placa</th>
+                <th className="px-6 py-3 font-medium">Modelo</th>
+                <th className="px-6 py-3 font-medium">Ult. Tecnicomecanica</th>
+                <th className="px-6 py-3 font-medium">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -307,16 +497,15 @@ function Panel() {
                   key={taxi.id_taxi}
                   className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium"
                 >
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-heading whitespace-nowrap"
-                  >
+                  <td className="px-6 py-4 font-medium text-heading whitespace-nowrap">
                     {taxi.id_taxi}
                   </td>
                   <td className="px-6 py-4">{taxi.placa}</td>
                   <td className="px-6 py-4">{taxi.modelo}</td>
-                  <td className="px-6 py-4">{taxi.ultima_tecnico_mecanica.split("T")[0]}</td>
-                  <td>
+                  <td className="px-6 py-4">
+                    {taxi.ultima_tecnico_mecanica.split("T")[0]}
+                  </td>
+                  <td className="px-6 py-4">
                     <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mr-3">
                       Editar
                     </button>
@@ -330,6 +519,172 @@ function Panel() {
           </table>
         </div>
       </div>
+
+      {/* Modal editar usuario */}
+      <Dialog
+        visible={modalAbiertoUsuario}
+        position="top"
+        modal
+        header="Editar Usuario"
+        style={{ width: "50rem" }}
+        onHide={() => setModalAbiertoUsuario(false)}
+      >
+        <div className="bg-white p-8 flex flex-col w-full mb-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative mb-4">
+              <label>Nombre</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={formUser.nombre}
+                onChange={(e) => handleFormUser("nombre", e.target.value)}
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Primer apellido</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={formUser.primer_apellido}
+                onChange={(e) =>
+                  handleFormUser("primer_apellido", e.target.value)
+                }
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Segundo apellido</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={formUser.segundo_apellido}
+                onChange={(e) =>
+                  handleFormUser("segundo_apellido", e.target.value)
+                }
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Edad</label>
+              <input
+                type="number"
+                min={18}
+                max={100}
+                className={inputClass}
+                value={formUser.edad}
+                onChange={(e) => handleFormUser("edad", e.target.value)}
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Sexo</label>
+              <select
+                className={inputClass}
+                value={formUser.sexo}
+                onChange={(e) => handleFormUser("sexo", e.target.value)}
+              >
+                <option value="" disabled>
+                  Elige tu sexo
+                </option>
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div className="relative mb-4">
+              <label>Numero de documento</label>
+              <input
+                type="number"
+                max={2147483647}
+                className={inputClass}
+                value={formUser.numero_identificacion}
+                onChange={(e) =>
+                  handleFormUser("numero_identificacion", e.target.value)
+                }
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Correo Electronico</label>
+              <input
+                type="email"
+                className={inputClass}
+                value={formUser.email}
+                onChange={(e) => handleFormUser("email", e.target.value)}
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Numero de telefono</label>
+              <input
+                type="number"
+                className={inputClass}
+                value={formUser.numero_telefono}
+                onChange={(e) =>
+                  handleFormUser("numero_telefono", e.target.value)
+                }
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Fecha de nacimiento</label>
+              <input
+                type="date"
+                className={inputClass}
+                value={
+                  formUser.fecha_nacimiento
+                    ? formUser.fecha_nacimiento.split("T")[0]
+                    : ""
+                }
+                onChange={(e) =>
+                  handleFormUser("fecha_nacimiento", e.target.value)
+                }
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Nueva contraseña</label>
+              <input
+                type="password"
+                className={inputClass}
+                value={formUser.contrasena}
+                onChange={(e) => handleFormUser("contrasena", e.target.value)}
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Confirme su contraseña</label>
+              <input
+                type="password"
+                className={inputClass}
+                value={confirmarContrasena}
+                onChange={(e) => setConfirmarContrasena(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        <button
+          className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded cursor-pointer mr-2"
+          onClick={() => setModalAbiertoUsuario(false)}
+        >
+          Cancelar
+        </button>
+
+        <button
+          className="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={actualizarUsuario}
+          disabled={cargando}
+        >
+          {cargando ? "Actualizando..." : "Actualizar datos"}
+        </button>
+      </Dialog>
+
+      {/* Modal Crear taxi */}
+      <Dialog
+        visible={modalAbiertoCrearTaxi}
+        position="top"
+        modal
+        header="Crear Taxi"
+        style={{ width: "50rem" }}
+        onHide={() => setModalAbiertoCrearTaxi(false)}
+      >
+        <h1>Ola putas</h1>
+
+      </Dialog>
+
     </>
   );
 }
