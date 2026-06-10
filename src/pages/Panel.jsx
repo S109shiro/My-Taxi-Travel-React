@@ -7,7 +7,6 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import cambiarTema from "../components/bCambiarTema";
 import "./panel.css";
 
-
 // Validacion de contraseña (igual que en el otro componente)
 const validarContrasena = (contrasena) => {
   if (contrasena.length < 4)
@@ -27,13 +26,16 @@ function Panel() {
   // Modals
   const [modalAbiertoUsuario, setModalAbiertoUsuario] = useState(false);
   const [modalAbiertoCrearTaxi, setModalAbiertoCrearTaxi] = useState(false);
+  const [modalAbiertoEditarTaxi, setModalAbiertoEditarTaxi] = useState(false); // nuevo modal editar taxi
 
-  // Data Usuarios
+  // ID entidades
   const [usuarioIdEditar, setUsuarioIdEditar] = useState(null);
+  const [taxiIdEditar, setTaxiIdEditar] = useState(null);
 
   const [confirmarContrasena, setConfirmarContrasena] = useState("");
   const [cargando, setCargando] = useState(false);
 
+  // Objetos roles
   const [formUser, setFormUser] = useState({
     nombre: "",
     primer_apellido: "",
@@ -47,6 +49,12 @@ function Panel() {
     contrasena: "",
   });
 
+  const [formTaxi, setFormTaxi] = useState({
+    placa: "",
+    modelo: "",
+    ultima_tecnico_mecanica: "",
+  });
+
   // Toasts
   const mensajeCerrarSesionAdministrador = useRef(null);
   const mensajeContrasenasDistintas = useRef(null);
@@ -54,6 +62,8 @@ function Panel() {
   const mensajeActualizacionExitosa = useRef(null);
   const mensajeErrorServidor = useRef(null);
   const mensajeEliminacion = useRef(null);
+  const mensajeCreacion = useRef(null);
+  const mensajeInformativo = useRef(null);
 
   const nombreAdmin = localStorage.getItem("nombreAdministrador");
   const navigate = useNavigate();
@@ -221,10 +231,11 @@ function Panel() {
     confirmDialog({
       message: "¿Seguro que quieres eliminar tu cuenta?",
       header: "Eliminar cuenta",
-      icon: 'pi pi-times-circle',
+      group: "eliminarUsuario",
+      icon: "pi pi-times-circle",
       defaultFocus: "reject",
       acceptLabel: "Aceptar",
-      acceptClassName: "p-button-danger",  
+      acceptClassName: "p-button-danger",
       rejectLabel: "Cancelar",
       accept: async () => {
         try {
@@ -258,16 +269,192 @@ function Panel() {
             life: 2000,
           });
         }
-      
       },
-      reject: () =>{
+      reject: () => {
         mensajeEliminacion.current.show({
           severity: "info",
           summary: "Proceso Cancelado",
           detail: "Se ha cancelado la eliminacion de la cuenta",
           life: 2000,
-        })
+        });
+      },
+    });
+  };
+
+  // LOGICA PARA LOS TAXIS
+  // Crear un taxi
+  const crearTaxi = async () => {
+    if (
+      Object.values(formTaxi).some(
+        (valorObjecto) => valorObjecto === "" || valorObjecto === null,
+      )
+    ) {
+      mensajeInformativo.current.show({
+        severity: "info",
+        summary: "Datos incompletos",
+        detail: "Llena todos los campos antes de crear un taxi",
+        life: 2000,
+      });
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:8080/taxi/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formTaxi,
+          ultima_tecnico_mecanica:
+            formTaxi.ultima_tecnico_mecanica + "T12:00:00",
+        }),
+      });
+      if (response.ok) {
+        const data = await fetch("http://localhost:8080/taxi/getAll").then(
+          (r) => r.json(),
+        );
+        setTaxis(data);
+        mensajeCreacion.current.show({
+          severity: "success",
+          summary: "Taxi Creado",
+          detail: "La creacion del taxi fue exitosa",
+          life: 2000,
+        });
+        setTimeout(() => {
+          setModalAbiertoCrearTaxi(false);
+        }, 2000);
       }
+    } catch (error) {
+      mensajeErrorServidor.current.show({
+        severity: "error",
+        summary: "Error en el servidor",
+        detail: "No se puede crear el taxi. El servidor tardó demasiado en responder, inténtalo más tarde",
+        life: 2000,
+      });
+    }
+  };
+
+  // Actualizar un taxi
+
+  // Cargar datos del taxi al abrir el modal
+  useEffect(() => {
+    if (!taxiIdEditar) return;
+    const obtenerTaxi = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/taxi/get/${taxiIdEditar}`,
+          {
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+        const data = await response.json();
+        setFormTaxi({
+          placa: data.placa,
+          modelo: data.modelo,
+          ultima_tecnico_mecanica: data.ultima_tecnico_mecanica,
+        });
+      } catch (e) {
+        console.error("Error al obtener taxi a editar:", e);
+      }
+    };
+
+    obtenerTaxi();
+  }, [taxiIdEditar]);
+
+  // PUT para actualizar taxi
+  const actualizarTaxi = async () => {
+    const bodyRequestUpdate = {
+      id_taxi: taxiIdEditar,
+      placa: formTaxi.placa,
+      modelo: formTaxi.modelo,
+      ultima_tecnico_mecanica: formTaxi.ultima_tecnico_mecanica
+    };
+
+    try{
+      const response = await fetch("http://localhost:8080/taxi/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyRequestUpdate)
+      })
+      if(response.ok){
+        alert("Yeii")
+        const data = await fetch("http://localhost:8080/taxi/getAll").then((r) => r.json());
+        setTaxis(data);
+        setTimeout(() => {
+          setModalAbiertoEditarTaxi(false);
+          setTaxiIdEditar(null);
+          setCargando(false);
+        }, 2000);
+      }
+      else{
+        console.log(response)
+      }
+      
+      
+    }catch(e){
+      console.log(e)
+    }
+  }
+
+
+
+  // Eliminar un taxi
+  const eliminarTaxi = async (idTaxi) => {
+    confirmDialog({
+      message: "¿Seguro que quieres eliminar este taxi?",
+      group: "eliminarTaxi",
+      header: "Eliminar taxi",
+      icon: "pi pi-times-circle",
+      defaultFocus: "reject",
+      acceptLabel: "Aceptar",
+      acceptClassName: "p-button-danger",
+      rejectLabel: "Cancelar",
+      accept: async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/taxi/delete/${idTaxi}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          if (response.ok) {
+            // Quitar el taxi de la lista sin hacer otro fetch
+            setTaxis((prev) => prev.filter((u) => u.id_taxi !== idTaxi));
+            mensajeEliminacion.current.show({
+              severity: "success",
+              summary: "Taxi Eliminado",
+              detail: "Se ha eliminado el taxi correctamente",
+              life: 2000,
+            });
+          }
+          if (!response.ok) {
+            mensajeErrorServidor.current.show({
+              severity: "error",
+              summary: "Taxi en uso",
+              detail: "El taxi esta en uso, no se puede eliminar",
+              life: 2000,
+            });
+          }
+        } catch (error) {
+          mensajeErrorServidor.current.show({
+            severity: "error",
+            summary: "Error en el servidor",
+            detail: "El servidor tardó demasiado en responder, inténtalo más tarde",
+            life: 2000,
+          });
+        }
+      },
+      reject: () => {
+        mensajeEliminacion.current.show({
+          severity: "info",
+          summary: "Proceso Cancelado",
+          detail: "Se ha cancelado la eliminacion de la cuenta",
+          life: 2000,
+        });
+      },
     });
   };
 
@@ -294,7 +481,15 @@ function Panel() {
 
   // Abrir modal a la hora de crear taxi
   const abrirModalCrearTaxi = () => {
+    setFormTaxi({ placa: "", modelo: "", ultima_tecnico_mecanica: "" }); // limpia el form
+    setTaxiIdEditar(null);
     setModalAbiertoCrearTaxi(true);
+  };
+
+  // Abrir modal a la hora de editar taxi
+  const abrirModalEditarTaxi = (taxi) => {
+    setTaxiIdEditar(taxi.id_taxi);
+    setModalAbiertoEditarTaxi(true);
   };
 
   const handleFormUser = (campo, valor) => {
@@ -315,9 +510,31 @@ function Panel() {
       <Toast ref={mensajeContrasenasDistintas} position="center" />
       <Toast ref={mensajeContrasena} position="center" />
       <Toast ref={mensajeActualizacionExitosa} position="center" />
-      <Toast ref={mensajeErrorServidor} pt={{root: {className: "toastMensajeErrorServidor"}}}/>
-      <Toast ref={mensajeEliminacion} pt={{root: {className: "toastMensajeEliminacion"}}}/>
-      <ConfirmDialog pt={{icon: {className: "iconoEliminar"}}}/>
+      <Toast
+        ref={mensajeErrorServidor}
+        pt={{ root: { className: "toastMensajeErrorServidor" } }}
+      />
+      <Toast
+        ref={mensajeEliminacion}
+        pt={{ root: { className: "toastMensajeEliminacion" } }}
+      />
+      <Toast
+        ref={mensajeCreacion}
+        position="center"
+        pt={{ root: { className: "toastMensajeCreacion" } }}
+      />
+      <Toast
+        ref={mensajeInformativo}
+        pt={{ root: { className: "toastMensajeInformativo" } }}
+      />
+      <ConfirmDialog
+        group="eliminarUsuario"
+        pt={{ icon: { className: "iconoEliminar" } }}
+      />
+      <ConfirmDialog
+        group="eliminarTaxi"
+        pt={{ icon: { className: "iconoEliminar" } }}
+      />
 
       {/* Navbar */}
       <div className="bg-[#FEBC2F] grid grid-cols-4 items-center px-6 py-3">
@@ -477,7 +694,10 @@ function Panel() {
         <h2 className="text-center uppercase text-lg mb-2 font-bold">
           Taxis registrados en la plataforma
         </h2>
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-3" onClick={abrirModalCrearTaxi}>
+        <button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-3"
+          onClick={abrirModalCrearTaxi}
+        >
           Crear Taxi
         </button>
         <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
@@ -506,10 +726,18 @@ function Panel() {
                     {taxi.ultima_tecnico_mecanica.split("T")[0]}
                   </td>
                   <td className="px-6 py-4">
-                    <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mr-3">
+                    <button
+                      className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mr-3"
+                      onClick={() => abrirModalEditarTaxi(taxi)} // ← arreglado
+                    >
                       Editar
                     </button>
-                    <button className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded cursor-pointer">
+                    <button
+                      className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded cursor-pointer"
+                      onClick={() => {
+                        eliminarTaxi(taxi.id_taxi);
+                      }}
+                    >
                       Eliminar
                     </button>
                   </td>
@@ -681,10 +909,151 @@ function Panel() {
         style={{ width: "50rem" }}
         onHide={() => setModalAbiertoCrearTaxi(false)}
       >
-        <h1>Ola putas</h1>
-
+        <div className="bg-white p-8 flex flex-col w-full mb-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative mb-4">
+              <label>Placa</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={formTaxi.placa}
+                onChange={(e) =>
+                  setFormTaxi((prev) => ({ ...prev, placa: e.target.value }))
+                }
+                maxLength={6}
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Modelo</label>
+              <select
+                className={inputClass}
+                value={formTaxi.modelo}
+                onChange={(e) =>
+                  setFormTaxi((prev) => ({ ...prev, modelo: e.target.value }))
+                }
+              >
+                <option value="" disabled>Selecciona una marca</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Chevrolet">Chevrolet</option>
+                <option value="Renault">Renault</option>
+                <option value="Mazda">Mazda</option>
+                <option value="Hyundai">Hyundai</option>
+                <option value="Kia">Kia</option>
+                <option value="Ford">Ford</option>
+                <option value="Nissan">Nissan</option>
+                <option value="Volkswagen">Volkswagen</option>
+                <option value="Honda">Honda</option>
+                <option value="Suzuki">Suzuki</option>
+                <option value="Mitsubishi">Mitsubishi</option>
+              </select>
+            </div>
+            <div className="relative mb-4">
+              <label>Ultima Tecnico Mecanica</label>
+              <input
+                type="date"
+                className={inputClass}
+                value={formTaxi.ultima_tecnico_mecanica}
+                onChange={(e) =>
+                  setFormTaxi((prev) => ({
+                    ...prev,
+                    ultima_tecnico_mecanica: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
+        </div>
+        <button
+          className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded cursor-pointer mr-2"
+          onClick={() => setModalAbiertoCrearTaxi(false)}
+        >
+          Cancelar
+        </button>
+        <button
+          className="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={crearTaxi}
+          disabled={cargando}
+        >
+          {cargando ? "Creando..." : "Crear Taxi"}
+        </button>
       </Dialog>
 
+      {/* Modal editar taxi */}
+      <Dialog
+        visible={modalAbiertoEditarTaxi}
+        position="top"
+        modal
+        header="Editar Taxi"
+        style={{ width: "50rem" }}
+        onHide={() => setModalAbiertoEditarTaxi(false)}
+      >
+        <div className="bg-white p-8 flex flex-col w-full mb-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative mb-4">
+              <label>Placa</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={formTaxi.placa}
+                onChange={(e) =>
+                  setFormTaxi((prev) => ({ ...prev, placa: e.target.value }))
+                }
+                maxLength={6}
+              />
+            </div>
+            <div className="relative mb-4">
+              <label>Modelo</label>
+              <select
+                className={inputClass}
+                value={formTaxi.modelo}
+                onChange={(e) =>
+                  setFormTaxi((prev) => ({ ...prev, modelo: e.target.value }))
+                }
+              >
+                <option value="" disabled>Selecciona una marca</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Chevrolet">Chevrolet</option>
+                <option value="Renault">Renault</option>
+                <option value="Mazda">Mazda</option>
+                <option value="Hyundai">Hyundai</option>
+                <option value="Kia">Kia</option>
+                <option value="Ford">Ford</option>
+                <option value="Nissan">Nissan</option>
+                <option value="Volkswagen">Volkswagen</option>
+                <option value="Honda">Honda</option>
+                <option value="Suzuki">Suzuki</option>
+                <option value="Mitsubishi">Mitsubishi</option>
+              </select>
+            </div>
+            <div className="relative mb-4">
+              <label>Ultima Tecnico Mecanica</label>
+              <input
+                type="date"
+                className={inputClass}
+                value={formTaxi.ultima_tecnico_mecanica ? formTaxi.ultima_tecnico_mecanica.split("T")[0] : ""}
+                onChange={(e) =>
+                  setFormTaxi((prev) => ({
+                    ...prev,
+                    ultima_tecnico_mecanica: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
+        </div>
+        <button
+          className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded cursor-pointer mr-2"
+          onClick={() => setModalAbiertoEditarTaxi(false)}
+        >
+          Cancelar
+        </button>
+        <button
+          className="bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={cargando} onClick={actualizarTaxi}
+        >
+          {cargando ? "Actualizando..." : "Actualizar Taxi"}
+        </button>
+      </Dialog>
     </>
   );
 }

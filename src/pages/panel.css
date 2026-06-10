@@ -37,6 +37,14 @@ body{
     color: black;
 }
 
+.toastMensajeCreacion .p-toast-summary, .toastMensajeCreacion .p-toast-detail{
+    color: black;
+}
+
+.toastMensajeInformativo .p-toast-summary, .toastMensajeInformativo .p-toast-detail{
+    color: black;
+}
+
 .iconoEliminar {
   color: red !important;
   font-size: 2rem !important;
