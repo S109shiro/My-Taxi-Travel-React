@@ -43,3 +43,13 @@
     background-color: #565656;
     color: white;
 }
+
+.tarjeta {
+  position: relative;
+  z-index: 1000 !important;
+}
+
+form {
+  position: relative;
+  z-index: 1000;
+}
